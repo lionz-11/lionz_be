@@ -20,7 +20,7 @@ public class Tasknotice {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")//
+    @JoinColumn(name = "user_id")  //이거 name = "tasknotice_write"로 봐꿔야하나
     private User user;
 
     @Column(name = "tasknotice_date")
