@@ -116,8 +116,17 @@ public class TasknoticeApiController {
                 .map(t -> new ttDTO(t))
                 .collect(Collectors.toList());
 
-        //result.get(0).getId()
+        for(int i=0; i<result.size();i++) {
+            Tasknotice_Tag tt = tasknotice_tagService.findOne(result.get(i).id);
+            tasknotice_tagService.delete(tt);
+        }
 
+        for(Long e : request.tag_idList){
+            Tasknotice_Tag tasknotice_tag = new Tasknotice_Tag();
+            tasknotice_tag.setTasknotice(tasknoticeService.findOne(tn_id));
+            tasknotice_tag.setTag(tagService.findOne(e));
+            tasknotice_tagService.save(tasknotice_tag);
+        }
         return new UpdateResponse(tn_id);
     }
 
@@ -140,29 +149,6 @@ public class TasknoticeApiController {
         private Long id;
         UpdateResponse(Long id){ this.id = id;}
     }
-
-    @PostMapping("delete/{id}")
-    public void delete(@PathVariable("id") Long id){
-        Tasknotice_Tag tt;
-        tt = tasknotice_tagService.findOne(id);
-        tasknotice_tagService.delete(tt);
-    }
-
-    @GetMapping("find/{id}")
-    public List<ttDTO> findById(@PathVariable("id") Long id){
-        List<Tasknotice_Tag> tts = tasknotice_tagService.findById(id);
-        List<ttDTO> result = tts.stream()
-                .map(t -> new ttDTO(t))
-                .collect(Collectors.toList());
-       return result;
-
-    }
-    /*
-    @Data
-    @AllArgsConstructor
-    static class Result<T>{  //얘 없으면 []로 감싸져서 나가게됨 -> 얘 해줘야 {}로 감싸져서 나감
-        private T data;
-    }*/
     @Data
     static class ttDTO{   // Tasknotice_Tag(객체에서)의 id만 가져오도록
         private Long id;
