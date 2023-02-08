@@ -26,6 +26,9 @@ public class Tasknotice {
     @Column(name = "tasknotice_date")
     private LocalDateTime date;
 
+    @Column(name = "tasknotice_updatetime")
+    private LocalDateTime updateTime;
+
     @Column(name = "tasknotice_deadline")
     private LocalDateTime deadline;
 

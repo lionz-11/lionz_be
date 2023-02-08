@@ -3,10 +3,11 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/haza?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
-    password:
+    password: kjk8784^^*
 
   jpa:
     hibernate:
       ddl-auto: create  #create 아예 있는거 지우고 새로만들어짐
     properties:
       hibernate.format_sql: true
+
