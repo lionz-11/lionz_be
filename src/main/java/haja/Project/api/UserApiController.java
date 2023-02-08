@@ -15,7 +15,7 @@ public class UserApiController {
 
     private final UserService userService;
 
-    @PostMapping("user/join")
+    @PostMapping("join/user")
     public CreateUserResponse saveUser(@RequestBody @Valid CreateUserRequest request){
         User user = new User();
         user.setEmail(request.getEmail());

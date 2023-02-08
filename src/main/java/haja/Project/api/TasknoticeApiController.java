@@ -1,36 +1,44 @@
 package haja.Project.api;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import haja.Project.domain.Part;
-import haja.Project.domain.Tasknotice;
-import haja.Project.domain.User;
+import haja.Project.domain.*;
+import haja.Project.repository.TasknoticeRepository;
+import haja.Project.repository.Tasknotice_TagRepository;
 import haja.Project.repository.UserRepository;
+import haja.Project.service.TagService;
 import haja.Project.service.TasknoticeService;
+import haja.Project.service.Tasknotice_TagService;
 import haja.Project.service.UserService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
-@RestController
+@RestController // Rest API를 처리하는 Controller 임을 의미
 @RequiredArgsConstructor
 public class TasknoticeApiController {
 
     private final TasknoticeService tasknoticeService;
     private final UserService userService;
+    private final Tasknotice_TagService tasknotice_tagService;
+    private final TagService tagService;
 
     //과제공지글 생성
     //어차피 request.뭐시기 해서 일일히 다 넣어줘야해서 service패키지에 메서드 안만들었음
-    @PostMapping("tasknotice/create")
+    @PostMapping("create/tasknotice")
     public CreateTasknoticeResponse createTasknotice(@RequestBody @Valid CreateTasknoticeRequest request){
         Tasknotice tasknotice = new Tasknotice();
-
+        //tag_id만 리스트로 받고
+        //태그버튼을 누르면 tasknotice_tag객체가 생성되게 하고
         tasknotice.setUser(userService.findOne(request.getUser_id()));
         tasknotice.setDate(LocalDateTime.now()); //생성시점
         tasknotice.setDeadline(request.getDeadline()); // postman으로 날짜받는거
@@ -38,10 +46,19 @@ public class TasknoticeApiController {
         tasknotice.setTitle(request.getTitle());
         tasknotice.setExplanation(request.getExplanation());
 
-        Long id = tasknoticeService.save(tasknotice);
-        return new CreateTasknoticeResponse(id);  // new 조심
-    }
+        Long tn_id = tasknoticeService.save(tasknotice);
+        //이러면 이제 과제공지글을 생성이 된거고 이 때 request로 tag_id받고 아래에 tasknoticetag로직 추가
+        //request로 tag_id를 어떻게받을까 List로 받아서 for문으로 돌리자
 
+        for(Long e : request.tag_idList){
+            Tasknotice_Tag tasknotice_tag = new Tasknotice_Tag();
+            tasknotice_tag.setTasknotice(tasknoticeService.findOne(tn_id));
+            tasknotice_tag.setTag(tagService.findOne(e));
+            tasknotice_tagService.save(tasknotice_tag);
+        }
+
+        return new CreateTasknoticeResponse(tn_id);  // new 조심
+    }
     @Data
     static class CreateTasknoticeRequest{
         //private User user; //원래 이렇게 객체로 받고싶었는데 postman으로 그게 안돼서
@@ -56,6 +73,8 @@ public class TasknoticeApiController {
         //private File image; // 이건 나중에
         private String title;
         private String explanation;
+
+        private List<Long> tag_idList; //tag id 리스트로 받아서 위에서 스트림으로 돌려서 넣자
     }
 
     @Data
@@ -63,6 +82,92 @@ public class TasknoticeApiController {
         private Long id;
         public CreateTasknoticeResponse(Long id){
             this.id = id;
+        }
+    }
+
+    @PostMapping("update/button/tasknotice/{id}") //수정하기 버튼
+    public Tasknotice tasknotice(
+            @PathVariable("id") Long id){
+
+        return tasknoticeService.findOne(id); //이렇게 하면 Json이 그대로 오는것을 확인함
+        //그니까 수정하기 버튼 누르면 이렇게 주고
+        //수정완료 버튼 누르면 request날라온거 set으로 ㄱㄱ
+    }
+
+    @PostMapping("update/complete/tasknotice/{id}")
+    public UpdateResponse tasknotice(
+            @PathVariable("id") Long id,
+            @RequestBody @Valid UpdateRequest request){
+        Tasknotice tn;
+        tn = tasknoticeService.findOne(id);
+
+        //updateTime 도 하나 만들어야할듯
+        tn.setDeadline(request.getDeadline()); // postman으로 날짜받는거
+        tn.setTarget(request.getTarget());
+        tn.setTitle(request.getTitle());
+        tn.setExplanation(request.getExplanation());
+
+        Long tn_id = tasknoticeService.save(tn);
+        //이러면 이제 과제공지글을 생성이 된거고 이 때 request로 tag_id받고 아래에 tasknoticetag로직 추가
+        //request로 tag_id를 어떻게받을까 List로 받아서 for문으로 돌리자
+
+        List<Tasknotice_Tag> tts = tasknotice_tagService.findById(id); //여기부터 tasknotice_tag삭제 후 생성
+        List<ttDTO> result = tts.stream()
+                .map(t -> new ttDTO(t))
+                .collect(Collectors.toList());
+
+        //result.get(0).getId()
+
+        return new UpdateResponse(tn_id);
+    }
+
+    @Data
+    static class UpdateRequest{
+        private Long id;
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime deadline;
+        private Part target;
+        //private File image; // 이건 나중에
+        private String title;
+        private String explanation;
+
+        private List<Long> tag_idList;
+        private List<Long> data;
+    }
+
+    @Data
+    static class UpdateResponse{
+        private Long id;
+        UpdateResponse(Long id){ this.id = id;}
+    }
+
+    @PostMapping("delete/{id}")
+    public void delete(@PathVariable("id") Long id){
+        Tasknotice_Tag tt;
+        tt = tasknotice_tagService.findOne(id);
+        tasknotice_tagService.delete(tt);
+    }
+
+    @GetMapping("find/{id}")
+    public List<ttDTO> findById(@PathVariable("id") Long id){
+        List<Tasknotice_Tag> tts = tasknotice_tagService.findById(id);
+        List<ttDTO> result = tts.stream()
+                .map(t -> new ttDTO(t))
+                .collect(Collectors.toList());
+       return result;
+
+    }
+    /*
+    @Data
+    @AllArgsConstructor
+    static class Result<T>{  //얘 없으면 []로 감싸져서 나가게됨 -> 얘 해줘야 {}로 감싸져서 나감
+        private T data;
+    }*/
+    @Data
+    static class ttDTO{   // Tasknotice_Tag(객체에서)의 id만 가져오도록
+        private Long id;
+        public ttDTO(Tasknotice_Tag tasknotice_tag){
+            id = tasknotice_tag.getId();
         }
     }
 }

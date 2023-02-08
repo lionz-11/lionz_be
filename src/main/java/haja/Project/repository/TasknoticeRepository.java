@@ -27,12 +27,12 @@ public class TasknoticeRepository {
     public List<Tasknotice> findAll(){
         return em.createQuery("select m from Tasknotice m", Tasknotice.class).getResultList();
     }
-
     //이름으로 검색
     public List<Tasknotice> findByName(String name){
         return em.createQuery("select m from Tasknotice m where m.name = :name", Tasknotice.class)
                 .setParameter("name",name)
                 .getResultList();
     }
+
 
 }

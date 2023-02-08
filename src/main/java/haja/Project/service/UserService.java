@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -22,5 +24,9 @@ public class UserService {
 
     public User findOne(Long id){
         return userRepository.findOne(id);
+    }
+
+    public List<User> findAll(){
+        return userRepository.findAll();
     }
 }

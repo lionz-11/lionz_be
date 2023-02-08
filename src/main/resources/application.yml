@@ -7,6 +7,6 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create  #create 아예 있는거 지우고 새로만들어짐
+      ddl-auto: update  #create 아예 있는거 지우고 새로만들어짐
     properties:
       hibernate.format_sql: true

@@ -18,4 +18,15 @@ public class TasknoticeService {
         tasknoticeRepository.save(tasknotice);
         return tasknotice.getId();
     }
+
+    public Tasknotice findOne(Long id){
+        return tasknoticeRepository.findOne(id);
+    }
+
+
+    @Transactional      // 과제공지글 수정
+    public Long update(Tasknotice tasknotice){
+        tasknoticeRepository.save(tasknotice);
+        return tasknotice.getId();
+    }
 }
