@@ -34,7 +34,7 @@ public class TasknoticeApiController {
 
     //과제공지글 생성
     //어차피 request.뭐시기 해서 일일히 다 넣어줘야해서 service패키지에 메서드 안만들었음
-    @PostMapping("create/tasknotice")
+    @PostMapping("tasknotice")
     public CreateTasknoticeResponse createTasknotice(@RequestBody @Valid CreateTasknoticeRequest request){
         Tasknotice tasknotice = new Tasknotice();
         //tag_id만 리스트로 받고
@@ -85,7 +85,7 @@ public class TasknoticeApiController {
         }
     }
 
-    @PostMapping("update/button/tasknotice/{id}") //수정하기 버튼
+    @PostMapping("button/tasknotice/{id}") //수정하기 버튼
     public Tasknotice tasknotice(
             @PathVariable("id") Long id){
 
@@ -94,7 +94,7 @@ public class TasknoticeApiController {
         //수정완료 버튼 누르면 request날라온거 set으로 ㄱㄱ
     }
 
-    @PostMapping("update/complete/tasknotice/{id}")
+    @PutMapping("tasknotice/{id}")
     public UpdateResponse tasknotice(
             @PathVariable("id") Long id,
             @RequestBody @Valid UpdateRequest request){
@@ -150,7 +150,7 @@ public class TasknoticeApiController {
         UpdateResponse(Long id){ this.id = id;}
     }
 
-    @DeleteMapping("delete/tasknotice/{id}")
+    @DeleteMapping("tasknotice/{id}")
     public void deleteTasknotice(@PathVariable("id") Long id) {
         tasknoticeService.delete(id);
     }
@@ -161,5 +161,48 @@ public class TasknoticeApiController {
         public ttDTO(Tasknotice_Tag tasknotice_tag){
             id = tasknotice_tag.getId();
         }
+    }
+
+    @GetMapping("tasknotice")
+    public Result ReadTasknotice() {
+        List<Tasknotice> tasknotices = tasknoticeService.findAll();
+        List<TasknoticeDto> collect = tasknotices.stream()
+                .map(t -> new TasknoticeDto(t))
+                .collect(Collectors.toList());
+        return new Result(collect);
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class TasknoticeDto {
+        private Long id;
+        private User user;
+        private LocalDateTime date;
+        private LocalDateTime deadline;
+        //private LocalDateTime updatetime;
+        private Part target;
+        private File image;
+        private String title;
+        private String explanation;
+        private Long like;
+
+        public TasknoticeDto(Tasknotice tasknotice) {
+            id = tasknotice.getId();
+            user = tasknotice.getUser();
+            date = tasknotice.getDate();
+            deadline = tasknotice.getDeadline();
+            //updatetime = tasknotice.getUpdateTime();
+            target = tasknotice.getTarget();
+            image = tasknotice.getImage();
+            title = tasknotice.getTitle();
+            explanation = tasknotice.getExplanation();
+            like = tasknotice.getLike();
+        }
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class Result<T> {
+        private T data;
     }
 }
