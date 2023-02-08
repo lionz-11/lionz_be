@@ -149,6 +149,12 @@ public class TasknoticeApiController {
         private Long id;
         UpdateResponse(Long id){ this.id = id;}
     }
+
+    @DeleteMapping("delete/tasknotice/{id}")
+    public void deleteTasknotice(@PathVariable("id") Long id) {
+        tasknoticeService.delete(id);
+    }
+
     @Data
     static class ttDTO{   // Tasknotice_Tag(객체에서)의 id만 가져오도록
         private Long id;

@@ -29,4 +29,9 @@ public class TasknoticeService {
         tasknoticeRepository.save(tasknotice);
         return tasknotice.getId();
     }
+
+    @Transactional
+    public void delete(Long id) {
+        tasknoticeRepository.deleteTasknotice(id);
+    }
 }
