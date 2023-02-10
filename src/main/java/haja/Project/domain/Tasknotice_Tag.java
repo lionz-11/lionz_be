@@ -18,7 +18,7 @@ public class Tasknotice_Tag { //게시글(Tasknotice)에 태그등록이라는 a
     @Column(name = "tasknotce_tag_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tasknotice_id")
     private Tasknotice tasknotice;
 

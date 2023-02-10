@@ -1,6 +1,7 @@
 package haja.Project.domain;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,4 +33,5 @@ public class User {
 
     @Column(name = "is_staff")
     private boolean is_staff;
+
 }
