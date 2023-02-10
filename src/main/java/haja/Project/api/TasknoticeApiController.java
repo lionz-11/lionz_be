@@ -149,11 +149,60 @@ public class TasknoticeApiController {
         private Long id;
         UpdateResponse(Long id){ this.id = id;}
     }
+
+    @DeleteMapping("tasknotice/{id}")
+    public void deleteTasknotice(@PathVariable("id") Long id) {
+        tasknoticeService.delete(id);
+    }
+
     @Data
     static class ttDTO{   // Tasknotice_Tag(객체에서)의 id만 가져오도록
         private Long id;
         public ttDTO(Tasknotice_Tag tasknotice_tag){
             id = tasknotice_tag.getId();
         }
+    }
+
+    @GetMapping("tasknotice")
+    public Result ReadTasknotice() {
+        List<Tasknotice> tasknotices = tasknoticeService.findAll();
+        List<TasknoticeDto> collect = tasknotices.stream()
+                .map(t -> new TasknoticeDto(t))
+                .collect(Collectors.toList());
+        return new Result(collect);
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class TasknoticeDto {
+        private Long id;
+        private User user;
+        private LocalDateTime date;
+        private LocalDateTime deadline;
+        //private LocalDateTime updatetime;
+        private Part target;
+        private File image;
+        private String title;
+        private String explanation;
+        private Long like;
+
+        public TasknoticeDto(Tasknotice tasknotice) {
+            id = tasknotice.getId();
+            user = tasknotice.getUser();
+            date = tasknotice.getDate();
+            deadline = tasknotice.getDeadline();
+            //updatetime = tasknotice.getUpdateTime();
+            target = tasknotice.getTarget();
+            image = tasknotice.getImage();
+            title = tasknotice.getTitle();
+            explanation = tasknotice.getExplanation();
+            like = tasknotice.getLike();
+        }
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class Result<T> {
+        private T data;
     }
 }

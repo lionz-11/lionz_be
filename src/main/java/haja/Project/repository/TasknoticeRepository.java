@@ -4,6 +4,7 @@ import haja.Project.domain.Tasknotice;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -32,6 +33,14 @@ public class TasknoticeRepository {
         return em.createQuery("select m from Tasknotice m where m.name = :name", Tasknotice.class)
                 .setParameter("name",name)
                 .getResultList();
+    }
+
+    @Transactional
+    public void deleteTasknotice(Long id) {
+        em.createQuery(
+                        "delete from Tasknotice t where t.id = :id")
+                .setParameter("id", id)
+                .executeUpdate();
     }
 
 
