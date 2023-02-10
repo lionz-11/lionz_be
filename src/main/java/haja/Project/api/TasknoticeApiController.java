@@ -63,7 +63,7 @@ public class TasknoticeApiController {
     @Data
     static class CreateTasknoticeRequest{
         //private User user; //원래 이렇게 객체로 받고싶었는데 postman으로 그게 안돼서
-        private Long user_id;  // "user_id":"1" 이렇게 받고 userService에 있는 findOne으로 user객체불러와서 set해주는방식
+        //private Long user_id;  // -> request로 user 정보를 받는게 아니니까 빼도 될듯
 
         @CreatedDate
         private LocalDateTime date;
