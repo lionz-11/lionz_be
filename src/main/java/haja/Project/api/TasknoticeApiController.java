@@ -5,16 +5,15 @@ import haja.Project.domain.*;
 import haja.Project.repository.TasknoticeRepository;
 import haja.Project.repository.Tasknotice_TagRepository;
 import haja.Project.repository.UserRepository;
-import haja.Project.service.TagService;
-import haja.Project.service.TasknoticeService;
-import haja.Project.service.Tasknotice_TagService;
-import haja.Project.service.UserService;
+import haja.Project.service.*;
+import haja.Project.util.SecurityUtil;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
@@ -28,7 +27,8 @@ import java.util.stream.Collectors;
 public class TasknoticeApiController {
 
     private final TasknoticeService tasknoticeService;
-    private final UserService userService;
+    //private final UserService userService;
+    private final MemberService memberService;
     private final Tasknotice_TagService tasknotice_tagService;
     private final TagService tagService;
 
@@ -39,7 +39,8 @@ public class TasknoticeApiController {
         Tasknotice tasknotice = new Tasknotice();
         //tag_id만 리스트로 받고
         //태그버튼을 누르면 tasknotice_tag객체가 생성되게 하고
-        tasknotice.setUser(userService.findOne(request.getUser_id()));
+        tasknotice.setMember(memberService.findById(SecurityUtil.getCurrentMemberId()).get());
+        //System.out.println(tasknotice.getMember().getEmail()); -> setMember 잘 됐는지 테스트용/ 잘 되는거 확인했습니다
         tasknotice.setDate(LocalDateTime.now()); //생성시점
         tasknotice.setDeadline(request.getDeadline()); // postman으로 날짜받는거
         tasknotice.setTarget(request.getTarget());
@@ -176,7 +177,7 @@ public class TasknoticeApiController {
     @AllArgsConstructor
     static class TasknoticeDto {
         private Long id;
-        private User user;
+        private Member member;
         private LocalDateTime date;
         private LocalDateTime deadline;
         //private LocalDateTime updatetime;
@@ -188,7 +189,7 @@ public class TasknoticeApiController {
 
         public TasknoticeDto(Tasknotice tasknotice) {
             id = tasknotice.getId();
-            user = tasknotice.getUser();
+            member = tasknotice.getMember();
             date = tasknotice.getDate();
             deadline = tasknotice.getDeadline();
             //updatetime = tasknotice.getUpdateTime();

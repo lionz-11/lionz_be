@@ -16,8 +16,8 @@ public class Notice {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @Column(name = "notice_title")
     private String title;
