@@ -18,6 +18,7 @@ public class MemberController {
 
     @GetMapping("/me")
     public ResponseEntity<MemberResponseDto> findMemberInfoById() {
+        System.out.println(memberService.findMemberInfoById(SecurityUtil.getCurrentMemberId()).getEmail());
         return ResponseEntity.ok(memberService.findMemberInfoById(SecurityUtil.getCurrentMemberId()));
     }
 

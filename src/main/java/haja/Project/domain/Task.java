@@ -25,8 +25,8 @@ public class Task {
     private LocalDateTime date;
 
     @ManyToOne
-    @JoinColumn(name = "task_user_id") //user_id
-    private User user;
+    @JoinColumn(name = "task_member_id") //user_id
+    private Member member;
 
     @ManyToOne
     @JoinColumn(name = "task_tasknotice_id")//tasknotice_id

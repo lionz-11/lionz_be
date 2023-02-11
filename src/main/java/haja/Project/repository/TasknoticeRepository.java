@@ -15,9 +15,7 @@ public class TasknoticeRepository {
     private EntityManager em;
 
     //저장
-    public void save(Tasknotice tasknotice){
-        em.persist(tasknotice);
-    }
+    public void save(Tasknotice tasknotice){ em.persist(tasknotice); }
 
     //단건조회
     public Tasknotice findOne(Long id){
