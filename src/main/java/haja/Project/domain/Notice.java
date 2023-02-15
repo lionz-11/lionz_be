@@ -19,6 +19,10 @@ public class Notice {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "notice_target")
+    private Part target;
+
     @Column(name = "notice_title")
     private String title;
 
