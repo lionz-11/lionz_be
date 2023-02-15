@@ -3,13 +3,13 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/haza?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
-    password: kjk8784
+    password: '@@hj159357'
 
   jpa:
     hibernate:
-      ddl-auto: create  #create 아예 있는거 지우고 새로만들어짐
+      ddl-auto: update  #create 아예 있는거 지우고 새로만들어짐
     properties:
       hibernate.format_sql: true
 
-jwt:
+jwt:  #이거 숨기고 push 해야하는데
   secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LXR1dG9yaWFsLWppd29vbi1zcHJpbmctYm9vdC1zZWN1cml0eS1qd3QtdHV0b3JpYWwK

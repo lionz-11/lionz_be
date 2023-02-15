@@ -16,7 +16,7 @@ public class TagApiController {
 
     private final TagService tagService;
 
-    @PostMapping("create/tag")
+    @PostMapping("create/tag")  //태그 생성
     public CreateTagResponse createTagResponse(@RequestBody @Valid CreateTagRequest request){
         Tag tag = new Tag();
         tag.setName(request.getName());

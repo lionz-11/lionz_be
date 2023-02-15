@@ -32,7 +32,7 @@ public class TasknoticeApiController {
     private final Tasknotice_TagService tasknotice_tagService;
     private final TagService tagService;
 
-    //과제공지글 생성
+    //               <과제공지글 생성>
     //어차피 request.뭐시기 해서 일일히 다 넣어줘야해서 service패키지에 메서드 안만들었음
     @PostMapping("tasknotice")
     public CreateTasknoticeResponse createTasknotice(@RequestBody @Valid CreateTasknoticeRequest request){
@@ -206,4 +206,26 @@ public class TasknoticeApiController {
     static class Result<T> {
         private T data;
     }
+
+    //FE파트 tasknotice조회
+    @GetMapping("tasknotice/fe")
+    public Result ReadTasknoticeFe() {
+        List<Tasknotice> tasknotices = tasknoticeService.findFe();
+        List<TasknoticeDto> collect = tasknotices.stream()
+                .map(t -> new TasknoticeDto(t))
+                .collect(Collectors.toList());
+        return new Result(collect);
+    }
+
+    // BE파트 tasknotice조회
+    @GetMapping("tasknotice/be")
+    public Result ReadTasknoticeBe() {
+        List<Tasknotice> tasknotices = tasknoticeService.findBe();
+        List<TasknoticeDto> collect = tasknotices.stream()
+                .map(t -> new TasknoticeDto(t))
+                .collect(Collectors.toList());
+        return new Result(collect);
+    }
+
+
 }

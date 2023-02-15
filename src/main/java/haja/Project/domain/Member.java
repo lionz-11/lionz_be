@@ -50,6 +50,7 @@ public class Member {
         this.major = major;
         this.student_id = student_id;
     }
+/*
 
     @Builder
     public Member(String email, String password, Authority authority) {
@@ -57,4 +58,5 @@ public class Member {
         this.password = password;
         this.authority = authority;
     }
+*/
 }
