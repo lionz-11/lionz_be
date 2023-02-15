@@ -29,6 +29,10 @@ public class TasknoticeService {
         return tasknoticeRepository.findAll();
     }
 
+    public List<Tasknotice> findFe() { return tasknoticeRepository.findFe(); }
+
+    public List<Tasknotice> findBe() { return tasknoticeRepository.findBe(); }
+
     @Transactional      // 과제공지글 수정
     public Long update(Tasknotice tasknotice){
         tasknoticeRepository.save(tasknotice);
@@ -39,4 +43,5 @@ public class TasknoticeService {
     public void delete(Long id) {
         tasknoticeRepository.deleteTasknotice(id);
     }
+
 }

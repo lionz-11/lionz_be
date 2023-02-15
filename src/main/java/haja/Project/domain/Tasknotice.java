@@ -12,7 +12,6 @@ import java.util.List;
 @Entity
 @Getter @Setter
 public class Tasknotice {
-    // 태그 넣어야 함!
 
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
