@@ -1,11 +1,7 @@
 package haja.Project.api;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import haja.Project.domain.Member;
-import haja.Project.domain.Notice;
-import haja.Project.domain.Notice_Tag;
-import haja.Project.domain.Tag;
-import haja.Project.repository.Notice_TagRepository;
+import haja.Project.domain.*;
 import haja.Project.service.MemberService;
 import haja.Project.service.NoticeService;
 import haja.Project.service.Notice_TagService;
@@ -15,7 +11,6 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -39,6 +34,7 @@ public class NoticeApiController {
         notice.setExplanation(request.explanation);
         notice.setDate(LocalDate.now());
         notice.setDeadline(request.deadline);
+        notice.setTarget(request.target);
 
         Long id = noticeService.save(notice);
 
@@ -133,6 +129,7 @@ public class NoticeApiController {
     static class NoticeRequest {
         String title;
         String explanation;
+        Part target;
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
         LocalDateTime deadline;
         List<String> tags;
@@ -153,6 +150,7 @@ public class NoticeApiController {
         String title;
         String explanation;
         LocalDate date;
+        Part target;
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
         LocalDateTime deadline;
         Long like;
@@ -165,6 +163,7 @@ public class NoticeApiController {
             this.explanation = notice.getExplanation();
             this.date = notice.getDate();
             this.deadline = notice.getDeadline();
+            this.target = notice.getTarget();
             this.like = notice.getLike();
         }
     }
