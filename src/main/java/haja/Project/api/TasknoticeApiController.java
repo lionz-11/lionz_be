@@ -47,18 +47,32 @@ public class TasknoticeApiController {
         tasknotice.setTitle(request.getTitle());
         tasknotice.setExplanation(request.getExplanation());
 
-        Long tn_id = tasknoticeService.save(tasknotice);
-        //이러면 이제 과제공지글을 생성이 된거고 이 때 request로 tag_id받고 아래에 tasknoticetag로직 추가
-        //request로 tag_id를 어떻게받을까 List로 받아서 for문으로 돌리자
+        Long id = tasknoticeService.save(tasknotice);
 
-        for(Long e : request.tag_idList){
-            Tasknotice_Tag tasknotice_tag = new Tasknotice_Tag();
-            tasknotice_tag.setTasknotice(tasknoticeService.findOne(tn_id));
-            tasknotice_tag.setTag(tagService.findOne(e));
-            tasknotice_tagService.save(tasknotice_tag);
+        // 태그 저장장
+        List<String> tags = request.tags;
+        if (tags != null) {
+            for (String tag_name : tags) {
+                if (tagService.findByName(tag_name) == null) {
+                    Tag tag = new Tag();
+                    tag.setName(tag_name);
+                    tagService.save(tag);
+
+                    Tasknotice_Tag tasknotice_tag = new Tasknotice_Tag();
+                    tasknotice_tag.setTasknotice(tasknoticeService.findOne(id));
+                    tasknotice_tag.setTag(tag);
+                    tasknotice_tagService.save(tasknotice_tag);
+                }
+                else {
+                    Tasknotice_Tag tasknotice_tag = new Tasknotice_Tag();
+                    tasknotice_tag.setTasknotice(tasknoticeService.findOne(id));
+                    tasknotice_tag.setTag(tagService.findByName(tag_name));
+                    tasknotice_tagService.save(tasknotice_tag);
+                }
+            }
         }
 
-        return new CreateTasknoticeResponse(tn_id);  // new 조심
+        return new CreateTasknoticeResponse(id);  // new 조심
     }
     @Data
     static class CreateTasknoticeRequest{
@@ -74,8 +88,8 @@ public class TasknoticeApiController {
         //private File image; // 이건 나중에
         private String title;
         private String explanation;
+        private List<String> tags;
 
-        private List<Long> tag_idList; //tag id 리스트로 받아서 위에서 스트림으로 돌려서 넣자
     }
 
     @Data
@@ -122,11 +136,26 @@ public class TasknoticeApiController {
             tasknotice_tagService.delete(tt);
         }
 
-        for(Long e : request.tag_idList){
-            Tasknotice_Tag tasknotice_tag = new Tasknotice_Tag();
-            tasknotice_tag.setTasknotice(tasknoticeService.findOne(tn_id));
-            tasknotice_tag.setTag(tagService.findOne(e));
-            tasknotice_tagService.save(tasknotice_tag);
+        List<String> tags = request.tags;
+        if (tags != null) {
+            for (String tag_name : tags) {
+                if (tagService.findByName(tag_name) == null) {
+                    Tag tag = new Tag();
+                    tag.setName(tag_name);
+                    tagService.save(tag);
+
+                    Tasknotice_Tag tasknotice_tag = new Tasknotice_Tag();
+                    tasknotice_tag.setTasknotice(tasknoticeService.findOne(tn_id));
+                    tasknotice_tag.setTag(tag);
+                    tasknotice_tagService.save(tasknotice_tag);
+                }
+                else {
+                    Tasknotice_Tag tasknotice_tag = new Tasknotice_Tag();
+                    tasknotice_tag.setTasknotice(tasknoticeService.findOne(tn_id));
+                    tasknotice_tag.setTag(tagService.findByName(tag_name));
+                    tasknotice_tagService.save(tasknotice_tag);
+                }
+            }
         }
         return new UpdateResponse(tn_id);
     }
@@ -141,7 +170,7 @@ public class TasknoticeApiController {
         private String title;
         private String explanation;
 
-        private List<Long> tag_idList;
+        private List<String> tags;
         private List<Long> data;
     }
 
@@ -153,6 +182,7 @@ public class TasknoticeApiController {
 
     @DeleteMapping("tasknotice/{id}")
     public void deleteTasknotice(@PathVariable("id") Long id) {
+        tasknotice_tagService.deleteByTasknoticeId(id);
         tasknoticeService.delete(id);
     }
 

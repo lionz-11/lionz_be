@@ -119,9 +119,8 @@ public class NoticeApiController {
 
     @DeleteMapping("notice/{id}")
     public void deleteNotice(@PathVariable("id") Long id) {
+        notice_tagService.deleteByNoticeId(id);
         noticeService.delete(id);
-        System.out.println(notice_tagService.deleteByNoticeId(id)
-        + "개의 notice_tag 삭제 완료");
     }
 
 

@@ -31,4 +31,10 @@ public class Tasknotice_TagRepository {
                 .setParameter("id",id)
                 .getResultList();
     }
+
+    public void deleteByTasknoticeId(Long id) {
+        em.createQuery("delete from Tasknotice_Tag t where t.tasknotice.id = :id")
+                .setParameter("id", id)
+                .executeUpdate();
+    }
 }
