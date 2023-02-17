@@ -34,5 +34,9 @@ public class Tasknotice_TagService {
         tasknoticeTagRepository.delete(tasknotice_tag);
     }
 
+    @Transactional
+    public void deleteByTasknoticeId(Long id) {
+        tasknoticeTagRepository.deleteByTasknoticeId(id);
+    }
 
 }
