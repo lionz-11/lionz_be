@@ -4,8 +4,9 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Getter
+@Getter @Setter
 @NoArgsConstructor
 @Table(name = "member")
 @Entity
@@ -27,7 +28,7 @@ public class Member {
     private String phone_num;
 
     @Column(name = "part")
-    private String part;
+    private Part part;
 
     @Column(name = "comment")
     private String comment;
@@ -39,7 +40,7 @@ public class Member {
     private String student_id;
 
     @Builder
-    public Member(Long id, String email, String password, Authority authority, String phone_num, String part, String comment, String major, String student_id) {
+    public Member(Long id, String email, String password, Authority authority, String phone_num, Part part, String comment, String major, String student_id) {
         this.id = id;
         this.email = email;
         this.password = password;
