@@ -49,11 +49,11 @@ public class TasknoticeApiController {
 
         Long id = tasknoticeService.save(tasknotice);
 
-        // 태그 저장장
+        // 태그 저장
         List<String> tags = request.tags;
         if (tags != null) {
             for (String tag_name : tags) {
-                if (tagService.findByName(tag_name) == null) {
+                if (tagService.findByName(tag_name) == null) {  //태그가 없는 태그면 새로생성해서
                     Tag tag = new Tag();
                     tag.setName(tag_name);
                     tagService.save(tag);
@@ -63,7 +63,7 @@ public class TasknoticeApiController {
                     tasknotice_tag.setTag(tag);
                     tasknotice_tagService.save(tasknotice_tag);
                 }
-                else {
+                else {   //이미 있는 태그면 걍 바로 넣어줌
                     Tasknotice_Tag tasknotice_tag = new Tasknotice_Tag();
                     tasknotice_tag.setTasknotice(tasknoticeService.findOne(id));
                     tasknotice_tag.setTag(tagService.findByName(tag_name));
@@ -100,7 +100,8 @@ public class TasknoticeApiController {
         }
     }
 
-    @PostMapping("button/tasknotice/{id}") //수정하기 버튼
+    //수정하기 버튼 -> 이전에 썼던 내용들 그대로 return
+    @PostMapping("button/tasknotice/{id}")
     public Tasknotice tasknotice(
             @PathVariable("id") Long id){
 
@@ -109,6 +110,7 @@ public class TasknoticeApiController {
         //수정완료 버튼 누르면 request날라온거 set으로 ㄱㄱ
     }
 
+    //수정완료 버튼
     @PutMapping("tasknotice/{id}")
     public UpdateResponse tasknotice(
             @PathVariable("id") Long id,
@@ -126,7 +128,7 @@ public class TasknoticeApiController {
         //이러면 이제 과제공지글을 생성이 된거고 이 때 request로 tag_id받고 아래에 tasknoticetag로직 추가
         //request로 tag_id를 어떻게받을까 List로 받아서 for문으로 돌리자
 
-        List<Tasknotice_Tag> tts = tasknotice_tagService.findById(id); //여기부터 tasknotice_tag삭제 후 생성
+        List<Tasknotice_Tag> tts = tasknotice_tagService.findByTasknoticeId(id); //여기부터 tasknotice_tag삭제 후 생성
         List<ttDTO> result = tts.stream()
                 .map(t -> new ttDTO(t))
                 .collect(Collectors.toList());
@@ -180,12 +182,6 @@ public class TasknoticeApiController {
         UpdateResponse(Long id){ this.id = id;}
     }
 
-    @DeleteMapping("tasknotice/{id}")
-    public void deleteTasknotice(@PathVariable("id") Long id) {
-        tasknotice_tagService.deleteByTasknoticeId(id);
-        tasknoticeService.delete(id);
-    }
-
     @Data
     static class ttDTO{   // Tasknotice_Tag(객체에서)의 id만 가져오도록
         private Long id;
@@ -193,6 +189,14 @@ public class TasknoticeApiController {
             id = tasknotice_tag.getId();
         }
     }
+
+    @DeleteMapping("tasknotice/{id}")
+    public void deleteTasknotice(@PathVariable("id") Long id) {
+        tasknotice_tagService.deleteByTasknoticeId(id);
+        tasknoticeService.delete(id);
+    }
+
+
 
     @GetMapping("tasknotice")
     public Result ReadTasknotice() {
@@ -216,6 +220,7 @@ public class TasknoticeApiController {
         private String title;
         private String explanation;
         private Long like;
+
 
         public TasknoticeDto(Tasknotice tasknotice) {
             id = tasknotice.getId();

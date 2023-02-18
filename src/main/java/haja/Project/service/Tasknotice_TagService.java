@@ -25,7 +25,7 @@ public class Tasknotice_TagService {
         return tasknoticeTagRepository.findOne(id);
     }
 
-    public List<Tasknotice_Tag> findById(Long id){
+    public List<Tasknotice_Tag> findByTasknoticeId(Long id){
         return tasknoticeTagRepository.findByTasknoticeId(id);
     }
 
