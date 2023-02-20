@@ -8,10 +8,14 @@ import haja.Project.domain.Part;
 import haja.Project.service.MemberService;
 import haja.Project.util.SecurityUtil;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,14 +36,24 @@ public class MemberController {
         return new MemberDto(member);
     }
 
-    @GetMapping("/email/{email}")
-    public MemberDto findMemberInfoByEmail(@PathVariable("email") String email) {
-        return new MemberDto(memberService.findByEmail(email).get());
-    }
-
     @GetMapping("/{id}")
     public MemberDto findMemberInfoById(@PathVariable("id") Long id) {
         return new MemberDto(memberService.findById(id).get());
+    }
+
+    @GetMapping("/all")
+    public Result findAllMember() {
+        List<Member> members = memberService.findAll();
+        List<MemberDto> memberResult = members.stream()
+                .map(member -> new MemberDto(member))
+                .collect(Collectors.toList());
+        return new Result(memberResult);
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class Result<T> {
+        private T data;
     }
 
 
