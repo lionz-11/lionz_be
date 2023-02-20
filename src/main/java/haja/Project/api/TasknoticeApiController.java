@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -96,13 +97,24 @@ public class TasknoticeApiController {
     }
 
     //수정하기 버튼 -> 이전에 썼던 내용들 그대로 return
-    @PostMapping("button/tasknotice/{id}")
-    public Tasknotice tasknotice(
+    @GetMapping("button/tasknotice/{id}")
+    public TasknoticeDto tasknotice(
             @PathVariable("id") Long id){
 
-        return tasknoticeService.findOne(id); //이렇게 하면 Json이 그대로 오는것을 확인함
+        TasknoticeDto d = new TasknoticeDto(tasknoticeService.findOne(id)); //이렇게 하면 Json이 그대로 오는것을 확인함
         //그니까 수정하기 버튼 누르면 이렇게 주고
         //수정완료 버튼 누르면 request날라온거 set으로 ㄱㄱ
+        if (taskService.isSubmit(d.id)) d.isSubmit = true;
+        else d.isSubmit = false;
+
+        // 태그 추가
+        List<Tasknotice_Tag> tags = tasknotice_tagService.findByTasknoticeId(d.id);
+        for (Tasknotice_Tag tag: tags) {
+            d.tag.add(tag.getTag().getName());
+        }
+
+        return d;
+
     }
 
     //수정완료 버튼
@@ -202,9 +214,15 @@ public class TasknoticeApiController {
                 .collect(Collectors.toList());
 
         for(TasknoticeDto d: collect) {
-            // 제출했으면
+            // 제출 미제출
             if (taskService.isSubmit(d.id)) d.isSubmit = true;
             else d.isSubmit = false;
+
+            // 태그 추가
+            List<Tasknotice_Tag> tags = tasknotice_tagService.findByTasknoticeId(d.id);
+            for (Tasknotice_Tag tag: tags) {
+                d.tag.add(tag.getTag().getName());
+            }
         }
         return new Result(collect);
     }
@@ -221,7 +239,8 @@ public class TasknoticeApiController {
         private File image;
         private String title;
         private String explanation;
-        private Long like;
+
+        private List<String> tag;
 
         private Boolean isSubmit;
 
@@ -236,8 +255,8 @@ public class TasknoticeApiController {
             image = tasknotice.getImage();
             title = tasknotice.getTitle();
             explanation = tasknotice.getExplanation();
-            like = tasknotice.getLike();
             isSubmit = false;
+            tag = new ArrayList<>();
         }
     }
 
