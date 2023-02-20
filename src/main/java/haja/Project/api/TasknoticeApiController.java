@@ -2,23 +2,17 @@ package haja.Project.api;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import haja.Project.domain.*;
-import haja.Project.repository.TasknoticeRepository;
-import haja.Project.repository.Tasknotice_TagRepository;
-import haja.Project.repository.UserRepository;
 import haja.Project.service.*;
 import haja.Project.util.SecurityUtil;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
