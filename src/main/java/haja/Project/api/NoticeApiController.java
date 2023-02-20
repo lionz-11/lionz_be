@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -71,6 +72,13 @@ public class NoticeApiController {
         List<Notice> notices = noticeService.findAll();
         List<NoticeDto> collect = notices.stream().map(n -> new NoticeDto(n))
                 .collect(Collectors.toList());
+
+        for (NoticeDto dto: collect) {
+            List<Notice_Tag> tags = notice_tagService.findByNotice(dto.id);
+            for (Notice_Tag tag: tags) {
+                dto.tag.add(tag.getTag().getName());
+            }
+        }
         return new Result(collect);
     }
 
@@ -80,6 +88,18 @@ public class NoticeApiController {
         List<NoticeDto> collect = notices.stream().map(n -> new NoticeDto(n))
                 .collect(Collectors.toList());
         return new Result(collect);
+    }
+
+    @GetMapping("button/notice/{id}")
+    public NoticeDto FindOne(@PathVariable("id") Long id) {
+        NoticeDto d = new NoticeDto(noticeService.findById(id));
+
+        List<Notice_Tag> tags = notice_tagService.findByNotice(d.id);
+        for (Notice_Tag tag: tags) {
+            d.tag.add(tag.getTag().getName());
+        }
+
+        return d;
     }
 
     @PutMapping("notice/{id}")
@@ -152,7 +172,7 @@ public class NoticeApiController {
         Part target;
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
         LocalDateTime deadline;
-        Long like;
+        List<String> tag;
 
 
         public NoticeDto(Notice notice) {
@@ -163,7 +183,7 @@ public class NoticeApiController {
             this.date = notice.getDate();
             this.deadline = notice.getDeadline();
             this.target = notice.getTarget();
-            this.like = notice.getLike();
+            tag = new ArrayList<>();
         }
     }
 
