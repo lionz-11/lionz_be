@@ -31,6 +31,7 @@ public class TasknoticeApiController {
     private final MemberService memberService;
     private final Tasknotice_TagService tasknotice_tagService;
     private final TagService tagService;
+    private final TaskService taskService;
 
     //               <과제공지글 생성>
     //어차피 request.뭐시기 해서 일일히 다 넣어줘야해서 service패키지에 메서드 안만들었음
@@ -200,10 +201,17 @@ public class TasknoticeApiController {
 
     @GetMapping("tasknotice")
     public Result ReadTasknotice() {
+        Member member = memberService.findById(SecurityUtil.getCurrentMemberId()).get();
         List<Tasknotice> tasknotices = tasknoticeService.findAll();
         List<TasknoticeDto> collect = tasknotices.stream()
                 .map(t -> new TasknoticeDto(t))
                 .collect(Collectors.toList());
+
+        for(TasknoticeDto d: collect) {
+            // 제출했으면
+            if (taskService.isSubmit(d.id)) d.isSubmit = true;
+            else d.isSubmit = false;
+        }
         return new Result(collect);
     }
 
@@ -221,6 +229,8 @@ public class TasknoticeApiController {
         private String explanation;
         private Long like;
 
+        private Boolean isSubmit;
+
 
         public TasknoticeDto(Tasknotice tasknotice) {
             id = tasknotice.getId();
@@ -233,6 +243,7 @@ public class TasknoticeApiController {
             title = tasknotice.getTitle();
             explanation = tasknotice.getExplanation();
             like = tasknotice.getLike();
+            isSubmit = false;
         }
     }
 
