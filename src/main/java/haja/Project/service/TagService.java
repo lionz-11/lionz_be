@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -29,5 +30,9 @@ public class TagService {
         Optional<Tag> tag = tagRepository.findByName(name);
         if (tag.isEmpty()) return null;
         else return tag.get();
+    }
+
+    public List<Tag> findByWord(String name){
+        return tagRepository.findByWord(name);
     }
 }

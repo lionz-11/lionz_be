@@ -30,6 +30,10 @@ public class TaskService {
         return taskRepository.findAll();
     }
 
+    public List<Task> findByWord(String word){
+        return taskRepository.findByWord(word);
+    }
+
     @Transactional
     public void delete(Long id){
         taskRepository.delete(id);

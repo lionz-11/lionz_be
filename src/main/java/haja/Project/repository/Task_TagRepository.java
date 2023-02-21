@@ -33,6 +33,14 @@ public class Task_TagRepository {
                 .getResultList();
     }
 
+    //저기 쿼리문에서 줄바꿀 때 공백(space) 줘야 에러 안나더라  //  tg " 마냥
+    public List<Task_Tag> findByTagName(String name){
+        return em.createQuery("select tt from Task_Tag tt join tt.task tk join tt.tag tg "
+                        +"where tg.name Like :name and tt.tag.id = tg.id and tt.task.id = tk.id",Task_Tag.class)
+                .setParameter("name",name)
+                .getResultList();
+    }
+
     public void deleteByTaskId(Long id) {
         em.createQuery("delete from Task_Tag t where t.task.id = :id")
                 .setParameter("id", id)

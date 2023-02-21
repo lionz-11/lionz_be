@@ -29,6 +29,9 @@ public class Tasknotice_TagService {
         return tasknoticeTagRepository.findByTasknoticeId(id);
     }
 
+    public List<Tasknotice_Tag> findByTagName(String name){
+        return tasknoticeTagRepository.findByTagName(name);
+    }
     @Transactional
     public void delete(Tasknotice_Tag tasknotice_tag){
         tasknoticeTagRepository.delete(tasknotice_tag);

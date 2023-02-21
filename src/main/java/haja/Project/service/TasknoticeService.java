@@ -33,6 +33,10 @@ public class TasknoticeService {
 
     public List<Tasknotice> findBe() { return tasknoticeRepository.findBe(); }
 
+    public List<Tasknotice> findByWord(String word){
+        return tasknoticeRepository.findByWord(word);
+    }
+
     @Transactional      // 과제공지글 수정
     public Long update(Tasknotice tasknotice){
         tasknoticeRepository.save(tasknotice);

@@ -219,9 +219,6 @@ public class TasknoticeApiController {
         private File image;
         private String title;
         private String explanation;
-        private Long like;
-
-
         public TasknoticeDto(Tasknotice tasknotice) {
             id = tasknotice.getId();
             member = tasknotice.getMember();
@@ -232,7 +229,6 @@ public class TasknoticeApiController {
             image = tasknotice.getImage();
             title = tasknotice.getTitle();
             explanation = tasknotice.getExplanation();
-            like = tasknotice.getLike();
         }
     }
 
