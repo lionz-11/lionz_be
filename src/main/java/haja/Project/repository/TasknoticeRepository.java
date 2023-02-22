@@ -55,10 +55,9 @@ public class TasknoticeRepository {
     }
 
     //삭제
-    @Transactional
+
     public void deleteTasknotice(Long id) {
-        em.createQuery(
-                        "delete from Tasknotice t where t.id = :id")
+        em.createQuery("delete from Tasknotice t where t.id = :id")
                 .setParameter("id", id)
                 .executeUpdate();
     }
