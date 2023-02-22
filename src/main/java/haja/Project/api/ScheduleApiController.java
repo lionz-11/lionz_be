@@ -63,7 +63,6 @@ public class ScheduleApiController {
 
         return new scheduleResult(sdt);  // 아래 scheduleResult에 @AllArgsConstructor없으면 에러남
     }
-
     @Data
     @AllArgsConstructor
     static class scheduleResult<T>{
