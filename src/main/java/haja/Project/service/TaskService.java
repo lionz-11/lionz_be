@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -30,12 +31,18 @@ public class TaskService {
         return taskRepository.findAll();
     }
 
-    public List<Task> findByWord(String word){
-        return taskRepository.findByWord(word);
+    public boolean isSubmit(Long tasknotice_id) {
+        Optional<Task> task = taskRepository.findSubmit(tasknotice_id);
+        if (task.isEmpty()) return false;
+        else return true;
     }
-
     @Transactional
     public void delete(Long id){
         taskRepository.delete(id);
     }
+
+    public List<Task> findByWord(String word){
+        return taskRepository.findByWord(word);
+    }
+
 }

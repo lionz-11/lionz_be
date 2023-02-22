@@ -2,18 +2,13 @@ package haja.Project.api;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import haja.Project.domain.*;
-import haja.Project.repository.TasknoticeRepository;
-import haja.Project.repository.Tasknotice_TagRepository;
-import haja.Project.repository.UserRepository;
 import haja.Project.service.*;
 import haja.Project.util.SecurityUtil;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
@@ -31,6 +26,7 @@ public class TasknoticeApiController {
     private final MemberService memberService;
     private final Tasknotice_TagService tasknotice_tagService;
     private final TagService tagService;
+    private final TaskService taskService;
 
     //               <과제공지글 생성>
     //어차피 request.뭐시기 해서 일일히 다 넣어줘야해서 service패키지에 메서드 안만들었음
@@ -101,13 +97,24 @@ public class TasknoticeApiController {
     }
 
     //수정하기 버튼 -> 이전에 썼던 내용들 그대로 return
-    @PostMapping("button/tasknotice/{id}")
-    public Tasknotice tasknotice(
+    @GetMapping("button/tasknotice/{id}")
+    public TasknoticeDto tasknotice(
             @PathVariable("id") Long id){
 
-        return tasknoticeService.findOne(id); //이렇게 하면 Json이 그대로 오는것을 확인함
+        TasknoticeDto d = new TasknoticeDto(tasknoticeService.findOne(id)); //이렇게 하면 Json이 그대로 오는것을 확인함
         //그니까 수정하기 버튼 누르면 이렇게 주고
         //수정완료 버튼 누르면 request날라온거 set으로 ㄱㄱ
+        if (taskService.isSubmit(d.id)) d.isSubmit = true;
+        else d.isSubmit = false;
+
+        // 태그 추가
+        List<Tasknotice_Tag> tags = tasknotice_tagService.findByTasknoticeId(d.id);
+        for (Tasknotice_Tag tag: tags) {
+            d.tag.add(tag.getTag().getName());
+        }
+
+        return d;
+
     }
 
     //수정완료 버튼
@@ -200,10 +207,23 @@ public class TasknoticeApiController {
 
     @GetMapping("tasknotice")
     public Result ReadTasknotice() {
+        Member member = memberService.findById(SecurityUtil.getCurrentMemberId()).get();
         List<Tasknotice> tasknotices = tasknoticeService.findAll();
         List<TasknoticeDto> collect = tasknotices.stream()
                 .map(t -> new TasknoticeDto(t))
                 .collect(Collectors.toList());
+
+        for(TasknoticeDto d: collect) {
+            // 제출 미제출
+            if (taskService.isSubmit(d.id)) d.isSubmit = true;
+            else d.isSubmit = false;
+
+            // 태그 추가
+            List<Tasknotice_Tag> tags = tasknotice_tagService.findByTasknoticeId(d.id);
+            for (Tasknotice_Tag tag: tags) {
+                d.tag.add(tag.getTag().getName());
+            }
+        }
         return new Result(collect);
     }
 
@@ -219,6 +239,12 @@ public class TasknoticeApiController {
         private File image;
         private String title;
         private String explanation;
+
+        private List<String> tag;
+
+        private Boolean isSubmit;
+
+
         public TasknoticeDto(Tasknotice tasknotice) {
             id = tasknotice.getId();
             member = tasknotice.getMember();
@@ -229,6 +255,8 @@ public class TasknoticeApiController {
             image = tasknotice.getImage();
             title = tasknotice.getTitle();
             explanation = tasknotice.getExplanation();
+            isSubmit = false;
+            tag = new ArrayList<>();
         }
     }
 
