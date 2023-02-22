@@ -40,4 +40,9 @@ public class TaskService {
     public void delete(Long id){
         taskRepository.delete(id);
     }
+
+    public List<Task> findByWord(String word){
+        return taskRepository.findByWord(word);
+    }
+
 }

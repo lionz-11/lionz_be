@@ -1,9 +1,8 @@
 package haja.Project.service;
 
+
 import haja.Project.domain.Task_Tag;
-import haja.Project.domain.Tasknotice_Tag;
 import haja.Project.repository.Task_TagRepository;
-import haja.Project.repository.Tasknotice_TagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +28,10 @@ public class Task_TagService {
 
     public List<Task_Tag> findByTaskId(Long id){
         return task_tagRepository.findByTaskId(id);
+    }
+
+    public List<Task_Tag> findByTagName(String name){
+        return task_tagRepository.findByTagName(name);
     }
 
     @Transactional

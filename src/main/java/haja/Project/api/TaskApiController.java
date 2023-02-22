@@ -44,7 +44,7 @@ public class TaskApiController {
     public CreateTaskResponse createTaskResponse(@RequestBody @Valid CreateTaskRequest request) {
         Task task = new Task();
         task.setLink(request.getLink());
-        task.setExplaination(request.getExplanation());
+        task.setExplanation(request.getExplanation());
         task.setMember(memberRepository.findById(SecurityUtil.getCurrentMemberId()).get());
         task.setDate(LocalDateTime.now());
         task.setTasknotice(tasknoticeService.findOne(request.getTasknotice_id()));
@@ -112,7 +112,7 @@ public class TaskApiController {
 
         //updateTime 도 하나 만들어야할듯
         task.setLink(request.getLink());
-        task.setExplaination(request.getExplanation());
+        task.setExplanation(request.getExplanation());
 
         Long task_id = taskService.save(task);
 
@@ -209,7 +209,7 @@ public class TaskApiController {
             id = task.getId();
             member = task.getMember();
             link = task.getLink();
-            explanation = task.getExplaination();
+            explanation = task.getExplanation();
             tasknotice = task.getTasknotice();
         }
     }

@@ -18,8 +18,8 @@ public class Task {
     @Column(name = "task_link")
     private String link;
 
-    @Column(name = "task_explaination")
-    private String explaination;
+    @Column(name = "task_explanation")
+    private String explanation;
 
     @Column(name = "task_date")
     private LocalDateTime date;
