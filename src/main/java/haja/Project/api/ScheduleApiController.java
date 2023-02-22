@@ -12,6 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController  //그냥 @Controller로 하면 [Circular view path~] 에러 발생함
 @RequiredArgsConstructor
@@ -51,6 +53,21 @@ public class ScheduleApiController {
         }
     }
 
+    //일정 all 조회
+    @GetMapping("schedule")
+    public scheduleResult AllSchedule(){
+        List<Schedule> schedules = scheduleService.findAll();
+        List<ScheduleDto> sdt = schedules.stream()
+                .map(t -> new ScheduleDto(t))
+                .collect(Collectors.toList());
+
+        return new scheduleResult(sdt);  // 아래 scheduleResult에 @AllArgsConstructor없으면 에러남
+    }
+    @Data
+    @AllArgsConstructor
+    static class scheduleResult<T>{
+        private T schedule;
+    }
 
     //일정 수정 (하러가기) 버튼 -> 이미 만들어놓은 일정 그대로 가져와서 보여주기
     @GetMapping("button/schedule/{id}")

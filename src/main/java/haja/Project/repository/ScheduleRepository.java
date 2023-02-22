@@ -30,6 +30,6 @@ public class ScheduleRepository {
         em.createQuery("delete  from Schedule s where s.id = :id")
                 .setParameter("id",id)
                 .executeUpdate();
-    //delete s from Schedule ~ 이 아님
+    //(주의) delete s from Schedule ~ 이 아님
     }
 }
