@@ -17,4 +17,3 @@ spring:
 
 jwt:  #이거 숨기고 push 해야하는데 -> 개발하는 동안은 걍 공개하죠??.. 다음에 생각 ㄱ -> 확인이요~
   secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LXR1dG9yaWFsLWppd29vbi1zcHJpbmctYm9vdC1zZWN1cml0eS1qd3QtdHV0b3JpYWwK
-
