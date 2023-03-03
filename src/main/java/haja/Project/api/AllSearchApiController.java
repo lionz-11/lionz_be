@@ -28,6 +28,7 @@ public class AllSearchApiController {
     private final Task_TagService task_tagService;
 
 
+    @io.swagger.v3.oas.annotations.tags.Tag(name = "통합검색",description = "검색모달에서 키워드 검색 부분")
     @GetMapping("all")
     public Result AllSearch(@RequestBody @Valid AllSearchRequest request){
         List<Tasknotice> tasknotices = tasknoticeService.findByWord(request.getWord());

@@ -30,6 +30,7 @@ public class TasknoticeApiController {
 
     //               <과제공지글 생성>
     //어차피 request.뭐시기 해서 일일히 다 넣어줘야해서 service패키지에 메서드 안만들었음
+    @io.swagger.v3.oas.annotations.tags.Tag(name = "과제공지글 생성버튼")
     @PostMapping("tasknotice")
     public CreateTasknoticeResponse createTasknotice(@RequestBody @Valid CreateTasknoticeRequest request){
         Tasknotice tasknotice = new Tasknotice();
@@ -97,6 +98,8 @@ public class TasknoticeApiController {
     }
 
     //수정하기 버튼 -> 이전에 썼던 내용들 그대로 return
+    @io.swagger.v3.oas.annotations.tags.Tag(name = "과제 공지 수정하러 가기 버튼",description = "수정완료 버튼이랑 다름" +
+            "이전에 썼던 내용을 그대로 가져와서 수정 할 부분만 수정하는 것을 생각함")
     @GetMapping("button/tasknotice/{id}")
     public TasknoticeDto tasknotice(
             @PathVariable("id") Long id){
@@ -118,6 +121,7 @@ public class TasknoticeApiController {
     }
 
     //수정완료 버튼
+    @io.swagger.v3.oas.annotations.tags.Tag(name = "수정 완료 버튼",description = "수정 할 부분 수정하고 이 버튼 누르면 수정됨")
     @PutMapping("tasknotice/{id}")
     public UpdateResponse tasknotice(
             @PathVariable("id") Long id,
@@ -197,6 +201,7 @@ public class TasknoticeApiController {
         }
     }
 
+    @io.swagger.v3.oas.annotations.tags.Tag(name = "과제 공지글 삭제버튼")
     @DeleteMapping("tasknotice/{id}")
     public void deleteTasknotice(@PathVariable("id") Long id) {
         tasknotice_tagService.deleteByTasknoticeId(id);
@@ -204,7 +209,7 @@ public class TasknoticeApiController {
     }
 
 
-
+    @io.swagger.v3.oas.annotations.tags.Tag(name = "모든 과제 공지글 불러오기")
     @GetMapping("tasknotice")
     public Result ReadTasknotice() {
         Member member = memberService.findById(SecurityUtil.getCurrentMemberId()).get();
@@ -267,7 +272,8 @@ public class TasknoticeApiController {
     }
 
     //FE파트 tasknotice조회
-    @GetMapping("tasknotice/fe")
+    @io.swagger.v3.oas.annotations.tags.Tag(name = "프론트엔드 대상 과제공지글만 불러오기")
+    @GetMapping("tasknotice/FE")
     public Result ReadTasknoticeFe() {
         List<Tasknotice> tasknotices = tasknoticeService.findFe();
         List<TasknoticeDto> collect = tasknotices.stream()
@@ -277,6 +283,7 @@ public class TasknoticeApiController {
     }
 
     // BE파트 tasknotice조회
+    @io.swagger.v3.oas.annotations.tags.Tag(name = "백엔드 대상 과제공지글만 불러오기")
     @GetMapping("tasknotice/be")
     public Result ReadTasknoticeBe() {
         List<Tasknotice> tasknotices = tasknoticeService.findBe();

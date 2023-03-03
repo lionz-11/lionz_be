@@ -16,6 +16,9 @@ public class TagApiController {
 
     private final TagService tagService;
 
+    @io.swagger.v3.oas.annotations.tags.Tag(name = "태그 생성",
+            description = "버튼은 아니지만 velog처럼 태그 입력하고 엔터누르면 생성되는 것을 생각함" +
+                    "->프론트분들이 엔터누를때 이 로직(url)이 실행되게끔 해주면 될 듯")
     @PostMapping("tag")  //태그 생성
     public CreateTagResponse createTagResponse(@RequestBody @Valid CreateTagRequest request){
         Tag tag = new Tag();
