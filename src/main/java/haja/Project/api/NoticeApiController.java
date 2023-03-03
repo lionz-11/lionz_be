@@ -27,6 +27,7 @@ public class NoticeApiController {
     private final TagService tagService;
     private final Notice_TagService notice_tagService;
 
+    @io.swagger.v3.oas.annotations.tags.Tag(name = "공지 생성 완료하기 버튼",description = "공지사항 생성 페이지에서 공지 생성 완료하기 버튼")
     @PostMapping("notice")
     public NoticeResponse createNotice(@RequestBody @Valid NoticeRequest request) {
         Notice notice = new Notice();
@@ -67,6 +68,7 @@ public class NoticeApiController {
 
     }
 
+    @io.swagger.v3.oas.annotations.tags.Tag(name = "과제 공지 글 불러오기",description = "버튼은 아니지만 공지사항 페이지 들어가면 공지사항들이 나와야 하니")
     @GetMapping("notice")
     public Result readNotice() {
         List<Notice> notices = noticeService.findAll();
@@ -82,6 +84,7 @@ public class NoticeApiController {
         return new Result(collect);
     }
 
+    @io.swagger.v3.oas.annotations.tags.Tag(name = "FE/BE 각각 공지 불러오기 ",description = "notice/BE로 하면 백엔드 공지글만 불러오고, notice/FE로 하면 프론트 공지글만 불러옴")
     @GetMapping("notice/{target}")
     public Result readNoticeByPart(@PathVariable("target") String target) {
         List<Notice> notices = noticeService.findByTarget(target);
@@ -137,6 +140,7 @@ public class NoticeApiController {
         return new NoticeResponse(id);
     }
 
+    @io.swagger.v3.oas.annotations.tags.Tag(name = "공지 글 삭제 버튼")
     @DeleteMapping("notice/{id}")
     public void deleteNotice(@PathVariable("id") Long id) {
         notice_tagService.deleteByNoticeId(id);

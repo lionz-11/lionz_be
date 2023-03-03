@@ -7,6 +7,7 @@ import haja.Project.domain.Member;
 import haja.Project.domain.Part;
 import haja.Project.service.MemberService;
 import haja.Project.util.SecurityUtil;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Data;
