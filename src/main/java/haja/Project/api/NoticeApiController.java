@@ -84,7 +84,7 @@ public class NoticeApiController {
         return new Result(collect);
     }
 
-    @io.swagger.v3.oas.annotations.tags.Tag(name = "FE/BE 각각 공지 불러오기 ",description = "notice/BE로 하면 백엔드 공지글만 불러오고, notice/FE로 하면 프론트 공지글만 불러옴")
+    @io.swagger.v3.oas.annotations.tags.Tag(name = "FE/BE 각각 공지 불러오기 ",description = "notice/BE로 하면 백엔드 공지글만 불러오고, notice/FE로 하면 프론트 공지글만 불러옴+ target은 json으로 받아야함")
     @GetMapping("notice/{target}")
     public Result readNoticeByPart(@PathVariable("target") String target) {
         List<Notice> notices = noticeService.findByTarget(target);
