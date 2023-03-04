@@ -41,9 +41,6 @@ public class Tasknotice {
     @Column(name = "tasknotice_explanation")
     private String explanation;
 
-    @Column(name = "tasknotice_like")
-    private Long like;
-
     /*
     // Tasknotice_Tag 와 양방향 매핑 시
     @OneToMany(mappedBy = "tasknotice")

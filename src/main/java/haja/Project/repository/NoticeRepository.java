@@ -1,6 +1,7 @@
 package haja.Project.repository;
 
 import haja.Project.domain.Notice;
+import haja.Project.domain.Part;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
@@ -27,8 +28,9 @@ public class NoticeRepository {
     }
 
     public List<Notice> findByTarget(String target) {
-        return em.createQuery("select n from Notice n where n.target = :target", Notice.class)
-                .setParameter("target", target)
+        Part part = Part.valueOf(target);
+        return em.createQuery("select n from Notice n where n.target = :part", Notice.class)
+                .setParameter("part", part)
                 .getResultList();
     }
 

@@ -11,6 +11,7 @@ import haja.Project.service.TaskService;
 import haja.Project.service.Task_TagService;
 import haja.Project.service.TasknoticeService;
 import haja.Project.util.SecurityUtil;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
+@io.swagger.v3.oas.annotations.tags.Tag(name = "Task")
 public class TaskApiController {
 
     private final TaskService taskService;
@@ -40,7 +42,7 @@ public class TaskApiController {
     // 프론트가 해줄 수 있다고 가정하고 ㄱㄱ
 
     // 과제생성
-    @io.swagger.v3.oas.annotations.tags.Tag(name = "과제 생성 버튼")
+    @Operation(summary = "과제 생성")
     @PostMapping("task")
     public CreateTaskResponse createTaskResponse(@RequestBody @Valid CreateTaskRequest request) {
         Task task = new Task();
@@ -97,17 +99,15 @@ public class TaskApiController {
     }
 
     //수정하기 버튼 -> 이전내용 그대로 가져오기위함
-    @io.swagger.v3.oas.annotations.tags.Tag(name = "과제 수정하기 버튼 (수정완료 버튼 아님)",
-            description = "이전 내용 그대로를 가져와서 수정 할 부분만 수정하는 것을 생각함")
-    @PostMapping("button/task/{id}")
+    @Operation(summary = "id로 과제 조회")
+    @PostMapping("task/{id}")
     public Task task(@PathVariable("id") Long id) {
         return taskService.findOne(id);
     }
 
 
     //수정완료 버튼
-    @io.swagger.v3.oas.annotations.tags.Tag(name = "수정 완료 버튼",description = "수정 할 부분 수정하고 이 버튼 누르면 저장됨 + 딸린 태그도 " +
-            "수정할 수 있음")
+    @Operation(summary = "과제 수정")
     @PutMapping("task/{id}")
     public UpdateResponse task(
             @PathVariable("id") Long id,
@@ -180,7 +180,7 @@ public class TaskApiController {
 
 
     //삭제
-    @io.swagger.v3.oas.annotations.tags.Tag(name = "과제 삭제 버튼")
+    @Operation(summary = "과제 삭제")
     @DeleteMapping("task/{id}")
     public void deleteTask(@PathVariable("id")Long id){
         task_tagService.deleteByTaskId(id);
@@ -188,7 +188,7 @@ public class TaskApiController {
     }
 
 
-    @io.swagger.v3.oas.annotations.tags.Tag(name = "모든 과제(task) 불러오기")
+    @Operation(summary = "모든 과제 조회")
     @GetMapping("task")
     public Result ReadTask(){
         List<Task> tasks = taskService.findAll();
