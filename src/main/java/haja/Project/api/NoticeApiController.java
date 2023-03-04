@@ -7,6 +7,7 @@ import haja.Project.service.NoticeService;
 import haja.Project.service.Notice_TagService;
 import haja.Project.service.TagService;
 import haja.Project.util.SecurityUtil;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,18 +16,20 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
+@io.swagger.v3.oas.annotations.tags.Tag(name = "Notice")
 public class NoticeApiController {
     private final NoticeService noticeService;
     private final MemberService memberService;
     private final TagService tagService;
     private final Notice_TagService notice_tagService;
 
-    @io.swagger.v3.oas.annotations.tags.Tag(name = "공지 생성 완료하기 버튼",description = "공지사항 생성 페이지에서 공지 생성 완료하기 버튼")
+    @Operation(summary = "공지사항 생성", description = "공지사항 생성 페이지에서 공지 생성 완료하기 버튼")
     @PostMapping("notice")
     public NoticeResponse createNotice(@RequestBody @Valid NoticeRequest request) {
         Notice notice = new Notice();
@@ -67,16 +70,24 @@ public class NoticeApiController {
 
     }
 
-    @io.swagger.v3.oas.annotations.tags.Tag(name = "과제 공지 글 불러오기",description = "버튼은 아니지만 공지사항 페이지 들어가면 공지사항들이 나와야 하니")
+
+    @Operation(summary = "전체 공지사항 조회")
     @GetMapping("notice")
     public Result readNotice() {
         List<Notice> notices = noticeService.findAll();
         List<NoticeDto> collect = notices.stream().map(n -> new NoticeDto(n))
                 .collect(Collectors.toList());
+
+        for (NoticeDto dto: collect) {
+            List<Notice_Tag> tags = notice_tagService.findByNotice(dto.id);
+            for (Notice_Tag tag: tags) {
+                dto.tag.add(tag.getTag().getName());
+            }
+        }
         return new Result(collect);
     }
 
-    @io.swagger.v3.oas.annotations.tags.Tag(name = "FE/BE 각각 공지 불러오기 ",description = "notice/BE로 하면 백엔드 공지글만 불러오고, notice/FE로 하면 프론트 공지글만 불러옴")
+    @Operation(summary = "파트별 공지사항 조회", description = "target에는 FE, BE, ALL이 들어갑니다")
     @GetMapping("notice/{target}")
     public Result readNoticeByPart(@PathVariable("target") String target) {
         List<Notice> notices = noticeService.findByTarget(target);
@@ -85,6 +96,20 @@ public class NoticeApiController {
         return new Result(collect);
     }
 
+    @Operation(summary = "id로 공지사항 조회")
+    @GetMapping("notice/{id}")
+    public NoticeDto FindOne(@PathVariable("id") Long id) {
+        NoticeDto d = new NoticeDto(noticeService.findById(id));
+
+        List<Notice_Tag> tags = notice_tagService.findByNotice(d.id);
+        for (Notice_Tag tag: tags) {
+            d.tag.add(tag.getTag().getName());
+        }
+
+        return d;
+    }
+
+    @Operation(summary = "공지사항 수정")
     @PutMapping("notice/{id}")
     public NoticeResponse updateNotice(@PathVariable("id") Long id,
             @RequestBody @Valid NoticeRequest request) {
@@ -120,7 +145,7 @@ public class NoticeApiController {
         return new NoticeResponse(id);
     }
 
-    @io.swagger.v3.oas.annotations.tags.Tag(name = "공지 글 삭제 버튼")
+    @Operation(summary = "공지사항 삭제")
     @DeleteMapping("notice/{id}")
     public void deleteNotice(@PathVariable("id") Long id) {
         notice_tagService.deleteByNoticeId(id);
@@ -156,7 +181,7 @@ public class NoticeApiController {
         Part target;
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
         LocalDateTime deadline;
-        Long like;
+        List<String> tag;
 
 
         public NoticeDto(Notice notice) {
@@ -167,7 +192,7 @@ public class NoticeApiController {
             this.date = notice.getDate();
             this.deadline = notice.getDeadline();
             this.target = notice.getTarget();
-            this.like = notice.getLike();
+            tag = new ArrayList<>();
         }
     }
 

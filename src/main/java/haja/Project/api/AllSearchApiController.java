@@ -2,6 +2,7 @@ package haja.Project.api;
 
 import haja.Project.domain.*;
 import haja.Project.service.*;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,7 +29,8 @@ public class AllSearchApiController {
     private final Task_TagService task_tagService;
 
 
-    @io.swagger.v3.oas.annotations.tags.Tag(name = "통합검색",description = "검색모달에서 키워드 검색 부분")
+    @io.swagger.v3.oas.annotations.tags.Tag(name = "통합검색")
+    @Operation(summary = "검색모달에서 키워드 검색 부분", description = "Tag, ")
     @GetMapping("all")
     public Result AllSearch(@RequestBody @Valid AllSearchRequest request){
         List<Tasknotice> tasknotices = tasknoticeService.findByWord(request.getWord());

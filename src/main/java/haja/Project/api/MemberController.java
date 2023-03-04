@@ -7,19 +7,26 @@ import haja.Project.domain.Member;
 import haja.Project.domain.Part;
 import haja.Project.service.MemberService;
 import haja.Project.util.SecurityUtil;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/member")
+@Tag(name = "Member")
 public class MemberController {
     private final MemberService memberService;
 
+    @Operation(summary = "멤버 수정")
     @PutMapping
     public MemberDto updateMember(@RequestBody @Valid MemberUpdateRequest request) {
         Member member = memberService.findById(SecurityUtil.getCurrentMemberId()).get();
@@ -27,20 +34,33 @@ public class MemberController {
         return new MemberDto(member);
     }
 
+    @Operation(summary = "로그인 중인 멤버 조회")
     @GetMapping
     public MemberDto MemberInfo() {
         Member member = memberService.findById(SecurityUtil.getCurrentMemberId()).get();
         return new MemberDto(member);
     }
 
-    @GetMapping("/email/{email}")
-    public MemberDto findMemberInfoByEmail(@PathVariable("email") String email) {
-        return new MemberDto(memberService.findByEmail(email).get());
-    }
-
+    @Operation(summary = "id로 멤버 조회")
     @GetMapping("/{id}")
     public MemberDto findMemberInfoById(@PathVariable("id") Long id) {
         return new MemberDto(memberService.findById(id).get());
+    }
+
+    @Operation(summary = "전체 멤버 조회")
+    @GetMapping("/all")
+    public Result findAllMember() {
+        List<Member> members = memberService.findAll();
+        List<MemberDto> memberResult = members.stream()
+                .map(member -> new MemberDto(member))
+                .collect(Collectors.toList());
+        return new Result(memberResult);
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class Result<T> {
+        private T data;
     }
 
 
