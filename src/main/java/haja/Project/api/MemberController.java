@@ -1,5 +1,6 @@
 package haja.Project.api;
 
+import com.sun.net.httpserver.Authenticator;
 import haja.Project.api.dto.MemberRequestDto;
 import haja.Project.api.dto.MemberResponseDto;
 import haja.Project.domain.Authority;
@@ -10,12 +11,18 @@ import haja.Project.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Null;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,6 +41,27 @@ public class MemberController {
         return new MemberDto(member);
     }
 
+    @Operation(summary = "멤버 프로필 업로드")
+    @PostMapping("/img")
+    public ResponseEntity<Void> updateMemberimage(@RequestBody @Valid MultipartFile file) {
+        Member member = memberService.findById(SecurityUtil.getCurrentMemberId()).get();
+        Date date = new Date();
+        String file_name = date.getTime() + member.getStudent_id();
+
+        if (file.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        File dest = new File("/home/img/" + file_name + file.getOriginalFilename());
+        try{
+            file.transferTo(dest);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+
+    }
     @Operation(summary = "로그인 중인 멤버 조회")
     @GetMapping
     public MemberDto MemberInfo() {
@@ -80,6 +108,7 @@ public class MemberController {
         Authority authority;
         String phone_num;
         Part part;
+        String name;
         String comment;
         String major;
         String student_id;
@@ -90,6 +119,7 @@ public class MemberController {
             this.authority = member.getAuthority();
             this.phone_num = member.getPhone_num();
             this.part = member.getPart();
+            this.name = member.getName();
             this.comment = member.getComment();
             this.major = member.getMajor();
             this.student_id = member.getStudent_id();

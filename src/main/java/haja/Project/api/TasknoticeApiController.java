@@ -285,7 +285,7 @@ public class TasknoticeApiController {
 
     // BE파트 tasknotice조회
     @Operation(summary = "BE 대상 과제 공지사항 조회")
-    @GetMapping("tasknotice/be")
+    @GetMapping("tasknotice/BE")
     public Result ReadTasknoticeBe() {
         List<Tasknotice> tasknotices = tasknoticeService.findBe();
         List<TasknoticeDto> collect = tasknotices.stream()
