@@ -62,14 +62,15 @@ public class MemberController {
 
         String file_name = date.getTime() + member.getStudent_id() + file.getOriginalFilename();
         //String file_name = "C:\\Users\\kjk87\\Desktop\\img\\" + date.getTime() + member.getStudent_id() + file.getOriginalFilename();
-        File dest = new File(file_name);
+        String img_path = "/home/img/" + file_name;
+        String img_link = "https://lionz.kro.kr/member/img/" + file_name;
+        File dest = new File(img_path);
 
         // 이미지 용량 제한
         BufferedImage bufferedImage = Scalr.resize(ImageIO.read(file.getInputStream()), 1000, 1000, Scalr.OP_ANTIALIAS);
         ImageIO.write(bufferedImage, "jpg", dest);
-        String img_path = "https://lionz.kro.kr/member/img/" + file_name;
-        String img_name = "/home/img/" + file_name;
-        memberService.setImage(member, img_path, img_name);
+
+        memberService.setImage(member, img_link, img_path);
 
         return new ResponseEntity<>(HttpStatus.OK);
 
@@ -103,7 +104,7 @@ public class MemberController {
     @Operation(summary = "멤버 프로필 조회", description = "member 조회 json - image에 링크가 들어있어서.. 직접 쓰실 일은 없을 거 같습니다")
     @GetMapping(value = "/img/{image}", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<byte[]> getImage(@PathVariable("image") String image) throws IOException {
-        InputStream inputStream = new FileInputStream(image);
+        InputStream inputStream = new FileInputStream("/home/img/" + image);
         byte[] bytes = inputStream.readAllBytes();
         inputStream.close();
         return new ResponseEntity<byte[]>(bytes, HttpStatus.OK);
