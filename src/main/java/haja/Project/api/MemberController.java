@@ -17,9 +17,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.imgscalr.Scalr;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,6 +27,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -61,8 +61,9 @@ public class MemberController {
         }
 
         String file_name = date.getTime() + member.getStudent_id() + file.getOriginalFilename();
-        //String file_name = "C:\\Users\\kjk87\\Desktop\\img\\" + date.getTime() + member.getStudent_id() + file.getOriginalFilename();
+        //String img_path = "C:\\Users\\kjk87\\Desktop\\img\\" + file_name;
         String img_path = "/home/img/" + file_name;
+        //String img_link = "http://localhost:8080/member/img/" + file_name;
         String img_link = "https://lionz.kro.kr/member/img/" + file_name;
         File dest = new File(img_path);
 
@@ -107,7 +108,9 @@ public class MemberController {
         InputStream inputStream = new FileInputStream("/home/img/" + image);
         byte[] bytes = inputStream.readAllBytes();
         inputStream.close();
-        return new ResponseEntity<byte[]>(bytes, HttpStatus.OK);
+        HttpHeaders header = new HttpHeaders();
+        header.add("Content-Type", Files.probeContentType(Paths.get("/home/img/" + image)));
+        return new ResponseEntity<byte[]>(bytes, header, HttpStatus.OK);
     }
 
     @Data
