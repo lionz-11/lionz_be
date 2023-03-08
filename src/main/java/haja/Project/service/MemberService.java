@@ -52,8 +52,9 @@ public class MemberService {
     }
 
     @Transactional
-    public void setImage(Member member, String image_path) {
+    public void setImage(Member member, String image_path, String image_name) {
         member.setImage(image_path);
+        member.setImage_name(image_name);
         memberRepository.save(member);
     }
 }

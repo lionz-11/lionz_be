@@ -45,6 +45,8 @@ public class Member {
     @Column(name = "image")
     private String image;
 
+    private String image_name;
+
     @Builder
     public Member(Long id, String email, String password, Authority authority, String name, String phone_num, Part part, String comment, String major, String student_id) {
         this.id = id;
