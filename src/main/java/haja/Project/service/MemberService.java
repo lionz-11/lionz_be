@@ -50,4 +50,10 @@ public class MemberService {
         memberRepository.save(member);
         return member.getId();
     }
+
+    @Transactional
+    public void setImage(Member member, String image_path) {
+        member.setImage(image_path);
+        memberRepository.save(member);
+    }
 }

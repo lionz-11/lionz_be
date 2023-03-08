@@ -15,16 +15,25 @@ import jakarta.validation.constraints.Null;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.imgscalr.Scalr;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+
+// 사진을 100kb로 줄이자
 
 @RestController
 @RequiredArgsConstructor
@@ -43,31 +52,36 @@ public class MemberController {
 
     @Operation(summary = "멤버 프로필 업로드")
     @PostMapping("/img")
-    public ResponseEntity<Void> updateMemberimage(@RequestBody @Valid MultipartFile file) {
+    public ResponseEntity<Void> updateMemberImage(@RequestBody @Valid MultipartFile file) throws IOException {
         Member member = memberService.findById(SecurityUtil.getCurrentMemberId()).get();
         Date date = new Date();
-        String file_name = date.getTime() + member.getStudent_id();
 
         if (file.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        File dest = new File("/home/img/" + file_name + file.getOriginalFilename());
-        try{
-            file.transferTo(dest);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        String file_name = "/home/img/" + date.getTime() + member.getStudent_id() + file.getOriginalFilename();
+        //String file_name = "C:\\Users\\kjk87\\Desktop\\img\\" + date.getTime() + member.getStudent_id() + file.getOriginalFilename();
+        File dest = new File(file_name);
+
+        // 이미지 용량 제한
+        BufferedImage bufferedImage = Scalr.resize(ImageIO.read(file.getInputStream()), 1000, 1000, Scalr.OP_ANTIALIAS);
+        ImageIO.write(bufferedImage, "jpg", dest);
+        String img_path = "https://lionz.kro.kr/member/img/" + date.getTime() + member.getStudent_id() + file.getOriginalFilename();
+        memberService.setImage(member, img_path);
 
         return new ResponseEntity<>(HttpStatus.OK);
 
     }
+
     @Operation(summary = "로그인 중인 멤버 조회")
     @GetMapping
     public MemberDto MemberInfo() {
         Member member = memberService.findById(SecurityUtil.getCurrentMemberId()).get();
         return new MemberDto(member);
     }
+
+
 
     @Operation(summary = "id로 멤버 조회")
     @GetMapping("/{id}")
@@ -83,6 +97,15 @@ public class MemberController {
                 .map(member -> new MemberDto(member))
                 .collect(Collectors.toList());
         return new Result(memberResult);
+    }
+
+    @Operation(summary = "멤버 프로필 조회", description = "member 조회 json - image에 링크가 들어있어서.. 직접 쓰실 일은 없을 거 같습니다")
+    @GetMapping(value = "/img/{image}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> getImage(@PathVariable("image") String image) throws IOException {
+        InputStream inputStream = new FileInputStream("/home/img/" + image);
+        byte[] bytes = inputStream.readAllBytes();
+        inputStream.close();
+        return new ResponseEntity<byte[]>(bytes, HttpStatus.OK);
     }
 
     @Data
@@ -112,6 +135,7 @@ public class MemberController {
         String comment;
         String major;
         String student_id;
+        String image;
 
         public MemberDto(Member member) {
             this.id = member.getId();
@@ -123,6 +147,7 @@ public class MemberController {
             this.comment = member.getComment();
             this.major = member.getMajor();
             this.student_id = member.getStudent_id();
+            this.image = member.getImage();
         }
     }
 }
