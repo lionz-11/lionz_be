@@ -17,6 +17,9 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "name")
+    private String name;
+
     private String email;
 
     private String password;
@@ -39,12 +42,17 @@ public class Member {
     @Column(name = "student_id")
     private String student_id;
 
+    @Embedded
+    private Image image;
+
+
     @Builder
-    public Member(Long id, String email, String password, Authority authority, String phone_num, Part part, String comment, String major, String student_id) {
+    public Member(Long id, String email, String password, Authority authority, String name, String phone_num, Part part, String comment, String major, String student_id) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.authority = authority;
+        this.name = name;
         this.phone_num = phone_num;
         this.part = part;
         this.comment = comment;
