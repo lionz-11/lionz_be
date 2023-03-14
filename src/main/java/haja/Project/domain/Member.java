@@ -42,10 +42,9 @@ public class Member {
     @Column(name = "student_id")
     private String student_id;
 
-    @Column(name = "image")
-    private String image;
+    @Embedded
+    private Image image;
 
-    private String image_name;
 
     @Builder
     public Member(Long id, String email, String password, Authority authority, String name, String phone_num, Part part, String comment, String major, String student_id) {
