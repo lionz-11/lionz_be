@@ -2,6 +2,7 @@ package haja.Project.service;
 
 import haja.Project.api.dto.MemberRequestDto;
 import haja.Project.api.dto.MemberResponseDto;
+import haja.Project.domain.Image;
 import haja.Project.domain.Member;
 import haja.Project.domain.Part;
 import haja.Project.repository.MemberRepository;
@@ -40,6 +41,12 @@ public class MemberService {
     public Optional<Member> findByEmail(String email){ return memberRepository.findByEmail(email); }
 
     @Transactional
+    public void deleteImage(Member member) {
+        member.setImage(null);
+        memberRepository.save(member);
+    }
+
+    @Transactional
     public Long update(Long id, String phone_num, Part part, String comment, String major, String student_id) {
         Member member = findById(id).get();
         member.setPhone_num(phone_num);
@@ -52,9 +59,8 @@ public class MemberService {
     }
 
     @Transactional
-    public void setImage(Member member, String image_path, String image_name) {
-        member.setImage(image_path);
-        member.setImage_name(image_name);
+    public void setImage(Member member, Image image) {
+        member.setImage(image);
         memberRepository.save(member);
     }
 }

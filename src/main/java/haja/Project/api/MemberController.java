@@ -4,6 +4,7 @@ import com.sun.net.httpserver.Authenticator;
 import haja.Project.api.dto.MemberRequestDto;
 import haja.Project.api.dto.MemberResponseDto;
 import haja.Project.domain.Authority;
+import haja.Project.domain.Image;
 import haja.Project.domain.Member;
 import haja.Project.domain.Part;
 import haja.Project.service.MemberService;
@@ -71,11 +72,14 @@ public class MemberController {
         BufferedImage bufferedImage = Scalr.resize(ImageIO.read(file.getInputStream()), 1000, 1000, Scalr.OP_ANTIALIAS);
         ImageIO.write(bufferedImage, "jpg", dest);
 
-        memberService.setImage(member, img_link, img_path);
+        Image image = new Image(img_link, file_name, img_path);
+        memberService.setImage(member, image);
+
 
         return new ResponseEntity<>(HttpStatus.OK);
 
     }
+
 
     @Operation(summary = "로그인 중인 멤버 조회")
     @GetMapping
@@ -102,15 +106,32 @@ public class MemberController {
         return new Result(memberResult);
     }
 
-    @Operation(summary = "멤버 프로필 조회", description = "member 조회 json - image에 링크가 들어있어서.. 직접 쓰실 일은 없을 거 같습니다")
-    @GetMapping(value = "/img/{image}", produces = MediaType.IMAGE_JPEG_VALUE)
-    public ResponseEntity<byte[]> getImage(@PathVariable("image") String image) throws IOException {
-        InputStream inputStream = new FileInputStream("/home/img/" + image);
+    @Operation(summary = "멤버 id로 프로필 조회")
+    @GetMapping(value = "/img/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> getImage(@PathVariable("id") Long id) throws IOException {
+        Image image = memberService.findById(id).get().getImage();
+
+        InputStream inputStream = new FileInputStream(image.img_path);
         byte[] bytes = inputStream.readAllBytes();
         inputStream.close();
         HttpHeaders header = new HttpHeaders();
-        header.add("Content-Type", Files.probeContentType(Paths.get("/home/img/" + image)));
+        header.add("Content-Type", Files.probeContentType(Paths.get(image.img_path)));
         return new ResponseEntity<byte[]>(bytes, header, HttpStatus.OK);
+    }
+
+    @Operation(summary = "현재 로그인한 멤버의 프로필 삭제")
+    @DeleteMapping(value = "/img")
+    public void deleteImage() {
+        Member member = memberService.findById(SecurityUtil.getCurrentMemberId()).get();
+
+        Image image = member.getImage();
+        File file = new File(image.img_path);
+        if(file.exists()) file.delete();
+
+        memberService.deleteImage(member);
+
+
+
     }
 
     @Data
@@ -140,7 +161,7 @@ public class MemberController {
         String comment;
         String major;
         String student_id;
-        String image;
+        Image image;
 
         public MemberDto(Member member) {
             this.id = member.getId();
