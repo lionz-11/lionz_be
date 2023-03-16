@@ -1,0 +1,31 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/haza?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+ #   url: jdbc:mysql:lionz-database.c7k5ljmkxsb3.ap-northeast-2.rds.amazonaws.com:3306/aws
+    username: root
+#    password: hj159357
+    password: '@@hj159357'
+
+
+#
+#spring:
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://database-lionz.c7k5ljmkxsb3.ap-northeast-2.rds.amazonaws.com:3306/demo?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+#    username: root
+#    password: hj159357
+
+  jpa:
+    hibernate:
+      ddl-auto: update  #create 아예 있는거 지우고 새로만들어짐
+      #ddl-auto: create
+    properties:
+      hibernate.format_sql: true
+
+  jackson:  # AllSearchApiController에서 사용 //이거 없으면 Tasknotice_Tag쪽이 안됨 no serializer에러 뜸
+    serialization:
+      fail-on-empty-beans : false
+
+jwt:  #이거 숨기고 push 해야하는데 -> 개발하는 동안은 걍 공개하죠??.. 다음에 생각 ㄱ -> 확인이요~
+  secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LXR1dG9yaWFsLWppd29vbi1zcHJpbmctYm9vdC1zZWN1cml0eS1qd3QtdHV0b3JpYWwK
