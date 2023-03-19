@@ -82,8 +82,6 @@ public class TaskApiController {
     static class CreateTaskRequest {
         private String link;
         private String explanation;
-        @CreatedDate
-        private LocalDateTime date;
         private Long tasknotice_id;
         private List<String> tags;
 
