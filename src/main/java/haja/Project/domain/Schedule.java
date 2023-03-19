@@ -3,6 +3,7 @@ package haja.Project.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
@@ -21,9 +22,11 @@ public class Schedule {
     @Column(name = "schedule_category")
     private Category category;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "schedule_startdate")
     private LocalDateTime startdate;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "schedule_enddate")
     private LocalDateTime enddate;
 }
