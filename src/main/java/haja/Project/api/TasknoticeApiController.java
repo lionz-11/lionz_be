@@ -111,20 +111,23 @@ public class TasknoticeApiController {
     @GetMapping("tasknotice/{id}")
     public TasknoticeDto tasknotice(
             @PathVariable("id") Long id){
+        if(memberService.findById(SecurityUtil.getCurrentMemberId()).get().getAuthority() == Authority.ROLE_ADMIN) {
+            TasknoticeDto d = new TasknoticeDto(tasknoticeService.findOne(id)); //이렇게 하면 Json이 그대로 오는것을 확인함
+            //그니까 수정하기 버튼 누르면 이렇게 주고
+            //수정완료 버튼 누르면 request날라온거 set으로 ㄱㄱ
+            if (taskService.isSubmit(d.id)) d.isSubmit = true;
+            else d.isSubmit = false;
 
-        TasknoticeDto d = new TasknoticeDto(tasknoticeService.findOne(id)); //이렇게 하면 Json이 그대로 오는것을 확인함
-        //그니까 수정하기 버튼 누르면 이렇게 주고
-        //수정완료 버튼 누르면 request날라온거 set으로 ㄱㄱ
-        if (taskService.isSubmit(d.id)) d.isSubmit = true;
-        else d.isSubmit = false;
+            // 태그 추가
+            List<Tasknotice_Tag> tags = tasknotice_tagService.findByTasknoticeId(d.id);
+            for (Tasknotice_Tag tag : tags) {
+                d.tag.add(tag.getTag().getName());
+            }
 
-        // 태그 추가
-        List<Tasknotice_Tag> tags = tasknotice_tagService.findByTasknoticeId(d.id);
-        for (Tasknotice_Tag tag: tags) {
-            d.tag.add(tag.getTag().getName());
+            return d;
         }
-
-        return d;
+        else
+            return null;
 
     }
 
@@ -134,51 +137,54 @@ public class TasknoticeApiController {
     public UpdateResponse tasknotice(
             @PathVariable("id") Long id,
             @RequestBody @Valid UpdateRequest request){
-        Tasknotice tn;
-        tn = tasknoticeService.findOne(id);
+        if(memberService.findById(SecurityUtil.getCurrentMemberId()).get().getAuthority() == Authority.ROLE_ADMIN) {
+            Tasknotice tn;
+            tn = tasknoticeService.findOne(id);
 
-        //updateTime 도 하나 만들어야할듯
-        tn.setDeadline(request.getDeadline()); // postman으로 날짜받는거
-        tn.setTarget(request.getTarget());
-        tn.setTitle(request.getTitle());
-        tn.setExplanation(request.getExplanation());
+            //updateTime 도 하나 만들어야할듯
+            tn.setDeadline(request.getDeadline()); // postman으로 날짜받는거
+            tn.setTarget(request.getTarget());
+            tn.setTitle(request.getTitle());
+            tn.setExplanation(request.getExplanation());
 
-        Long tn_id = tasknoticeService.save(tn);
-        //이러면 이제 과제공지글을 생성이 된거고 이 때 request로 tag_id받고 아래에 tasknoticetag로직 추가
-        //request로 tag_id를 어떻게받을까 List로 받아서 for문으로 돌리자
+            Long tn_id = tasknoticeService.save(tn);
+            //이러면 이제 과제공지글을 생성이 된거고 이 때 request로 tag_id받고 아래에 tasknoticetag로직 추가
+            //request로 tag_id를 어떻게받을까 List로 받아서 for문으로 돌리자
 
-        List<Tasknotice_Tag> tts = tasknotice_tagService.findByTasknoticeId(id); //여기부터 tasknotice_tag삭제 후 생성
-        List<ttDTO> result = tts.stream()
-                .map(t -> new ttDTO(t))
-                .collect(Collectors.toList());
+            List<Tasknotice_Tag> tts = tasknotice_tagService.findByTasknoticeId(id); //여기부터 tasknotice_tag삭제 후 생성
+            List<ttDTO> result = tts.stream()
+                    .map(t -> new ttDTO(t))
+                    .collect(Collectors.toList());
 
-        for(int i=0; i<result.size();i++) {
-            Tasknotice_Tag tt = tasknotice_tagService.findOne(result.get(i).id);
-            tasknotice_tagService.delete(tt);
-        }
+            for (int i = 0; i < result.size(); i++) {
+                Tasknotice_Tag tt = tasknotice_tagService.findOne(result.get(i).id);
+                tasknotice_tagService.delete(tt);
+            }
 
-        List<String> tags = request.tags;
-        if (tags != null) {
-            for (String tag_name : tags) {
-                if (tagService.findByName(tag_name) == null) {
-                    Tag tag = new Tag();
-                    tag.setName(tag_name);
-                    tagService.save(tag);
+            List<String> tags = request.tags;
+            if (tags != null) {
+                for (String tag_name : tags) {
+                    if (tagService.findByName(tag_name) == null) {
+                        Tag tag = new Tag();
+                        tag.setName(tag_name);
+                        tagService.save(tag);
 
-                    Tasknotice_Tag tasknotice_tag = new Tasknotice_Tag();
-                    tasknotice_tag.setTasknotice(tasknoticeService.findOne(tn_id));
-                    tasknotice_tag.setTag(tag);
-                    tasknotice_tagService.save(tasknotice_tag);
-                }
-                else {
-                    Tasknotice_Tag tasknotice_tag = new Tasknotice_Tag();
-                    tasknotice_tag.setTasknotice(tasknoticeService.findOne(tn_id));
-                    tasknotice_tag.setTag(tagService.findByName(tag_name));
-                    tasknotice_tagService.save(tasknotice_tag);
+                        Tasknotice_Tag tasknotice_tag = new Tasknotice_Tag();
+                        tasknotice_tag.setTasknotice(tasknoticeService.findOne(tn_id));
+                        tasknotice_tag.setTag(tag);
+                        tasknotice_tagService.save(tasknotice_tag);
+                    } else {
+                        Tasknotice_Tag tasknotice_tag = new Tasknotice_Tag();
+                        tasknotice_tag.setTasknotice(tasknoticeService.findOne(tn_id));
+                        tasknotice_tag.setTag(tagService.findByName(tag_name));
+                        tasknotice_tagService.save(tasknotice_tag);
+                    }
                 }
             }
+            return new UpdateResponse(tn_id);
         }
-        return new UpdateResponse(tn_id);
+        else
+            return null;
     }
 
     @Data
@@ -212,8 +218,10 @@ public class TasknoticeApiController {
     @Operation(summary = "과제 공지사항 삭제")
     @DeleteMapping("tasknotice/{id}")
     public void deleteTasknotice(@PathVariable("id") Long id) {
-        tasknotice_tagService.deleteByTasknoticeId(id);
-        tasknoticeService.delete(id);
+        if(memberService.findById(SecurityUtil.getCurrentMemberId()).get().getAuthority() == Authority.ROLE_ADMIN) {
+            tasknotice_tagService.deleteByTasknoticeId(id);
+            tasknoticeService.delete(id);
+        }
     }
 
 
