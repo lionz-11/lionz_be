@@ -10,6 +10,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
@@ -35,43 +37,48 @@ public class TasknoticeApiController {
     @Operation(summary = "과제 공지사항 생성")
     @PostMapping("tasknotice")
     public CreateTasknoticeResponse createTasknotice(@RequestBody @Valid CreateTasknoticeRequest request){
-        Tasknotice tasknotice = new Tasknotice();
-        //tag_id만 리스트로 받고
-        //태그버튼을 누르면 tasknotice_tag객체가 생성되게 하고
-        tasknotice.setMember(memberService.findById(SecurityUtil.getCurrentMemberId()).get());
-        //System.out.println(tasknotice.getMember().getEmail()); -> setMember 잘 됐는지 테스트용/ 잘 되는거 확인했습니다
-        tasknotice.setDate(LocalDateTime.now()); //생성시점
-        tasknotice.setDeadline(request.getDeadline()); // postman으로 날짜받는거
-        tasknotice.setTarget(request.getTarget());
-        tasknotice.setTitle(request.getTitle());
-        tasknotice.setExplanation(request.getExplanation());
+        if(memberService.findById(SecurityUtil.getCurrentMemberId()).get().getAuthority() == Authority.ROLE_ADMIN) {
+        //System.out.println("->" + memberService.findById(SecurityUtil.getCurrentMemberId()).get().getAuthority());
+        //-> 위의 결과 ROLE_USER로 나옴
+            Tasknotice tasknotice = new Tasknotice();
+            //tag_id만 리스트로 받고
+            //태그버튼을 누르면 tasknotice_tag객체가 생성되게 하고
+            tasknotice.setMember(memberService.findById(SecurityUtil.getCurrentMemberId()).get());
+            //System.out.println(tasknotice.getMember().getEmail()); -> setMember 잘 됐는지 테스트용/ 잘 되는거 확인했습니다
+            tasknotice.setDate(LocalDateTime.now()); //생성시점
+            tasknotice.setDeadline(request.getDeadline()); // postman으로 날짜받는거
+            tasknotice.setTarget(request.getTarget());
+            tasknotice.setTitle(request.getTitle());
+            tasknotice.setExplanation(request.getExplanation());
 
-        Long id = tasknoticeService.save(tasknotice);
+            Long id = tasknoticeService.save(tasknotice);
 
-        // 태그 저장
-        List<String> tags = request.tags;
-        if (tags != null) {
-            for (String tag_name : tags) {
-                if (tagService.findByName(tag_name) == null) {  //태그가 없는 태그면 새로생성해서
-                    Tag tag = new Tag();
-                    tag.setName(tag_name);
-                    tagService.save(tag);
+            // 태그 저장
+            List<String> tags = request.tags;
+            if (tags != null) {
+                for (String tag_name : tags) {
+                    if (tagService.findByName(tag_name) == null) {  //태그가 없는 태그면 새로생성해서
+                        Tag tag = new Tag();
+                        tag.setName(tag_name);
+                        tagService.save(tag);
 
-                    Tasknotice_Tag tasknotice_tag = new Tasknotice_Tag();
-                    tasknotice_tag.setTasknotice(tasknoticeService.findOne(id));
-                    tasknotice_tag.setTag(tag);
-                    tasknotice_tagService.save(tasknotice_tag);
-                }
-                else {   //이미 있는 태그면 걍 바로 넣어줌
-                    Tasknotice_Tag tasknotice_tag = new Tasknotice_Tag();
-                    tasknotice_tag.setTasknotice(tasknoticeService.findOne(id));
-                    tasknotice_tag.setTag(tagService.findByName(tag_name));
-                    tasknotice_tagService.save(tasknotice_tag);
+                        Tasknotice_Tag tasknotice_tag = new Tasknotice_Tag();
+                        tasknotice_tag.setTasknotice(tasknoticeService.findOne(id));
+                        tasknotice_tag.setTag(tag);
+                        tasknotice_tagService.save(tasknotice_tag);
+                    } else {   //이미 있는 태그면 걍 바로 넣어줌
+                        Tasknotice_Tag tasknotice_tag = new Tasknotice_Tag();
+                        tasknotice_tag.setTasknotice(tasknoticeService.findOne(id));
+                        tasknotice_tag.setTag(tagService.findByName(tag_name));
+                        tasknotice_tagService.save(tasknotice_tag);
+                    }
                 }
             }
-        }
 
-        return new CreateTasknoticeResponse(id);  // new 조심
+            return new CreateTasknoticeResponse(id);  // new 조심
+        }
+        return null;
+
     }
     @Data
     static class CreateTasknoticeRequest{
