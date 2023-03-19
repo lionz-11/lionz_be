@@ -90,6 +90,7 @@ public class ScheduleApiController {
         private Long id;
         private String title;
         private Category category;
+
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime startdate;
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
