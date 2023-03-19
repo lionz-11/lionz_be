@@ -52,7 +52,7 @@ public class MemberController {
     }
 
     @Operation(summary = "멤버 프로필 업로드")
-    @PostMapping("/img")
+    @PostMapping(value = "/img", consumes =  MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> updateMemberImage(@RequestBody @Valid MultipartFile file) throws IOException {
         Member member = memberService.findById(SecurityUtil.getCurrentMemberId()).get();
         Date date = new Date();
