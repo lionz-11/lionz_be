@@ -32,42 +32,45 @@ public class NoticeApiController {
     @Operation(summary = "공지사항 생성", description = "공지사항 생성 페이지에서 공지 생성 완료하기 버튼")
     @PostMapping("notice")
     public NoticeResponse createNotice(@RequestBody @Valid NoticeRequest request) {
-        Notice notice = new Notice();
-        notice.setMember(memberService.findById(SecurityUtil.getCurrentMemberId()).get());
-        notice.setTitle(request.title);
-        notice.setExplanation(request.explanation);
-        notice.setDate(LocalDate.now());
-        notice.setDeadline(request.deadline);
-        notice.setTarget(request.target);
+        if(memberService.findById(SecurityUtil.getCurrentMemberId()).get().getAuthority() == Authority.ROLE_ADMIN) {
+            Notice notice = new Notice();
+            notice.setMember(memberService.findById(SecurityUtil.getCurrentMemberId()).get());
+            notice.setTitle(request.title);
+            notice.setExplanation(request.explanation);
+            notice.setDate(LocalDate.now());
+            notice.setDeadline(request.deadline);
+            notice.setTarget(request.target);
 
-        Long id = noticeService.save(notice);
+            Long id = noticeService.save(notice);
 
-        List<String> tags = request.tags;
-        if (tags != null) {
-            for (String tag_name : tags) {
-                // 없는 태그면 Tag 생성하고 Notice_Tag 생성
-                if (tagService.findByName(tag_name) == null) {
-                    Tag tag = new Tag();
-                    tag.setName(tag_name);
-                    tagService.save(tag);
+            List<String> tags = request.tags;
+            if (tags != null) {
+                for (String tag_name : tags) {
+                    // 없는 태그면 Tag 생성하고 Notice_Tag 생성
+                    if (tagService.findByName(tag_name) == null) {
+                        Tag tag = new Tag();
+                        tag.setName(tag_name);
+                        tagService.save(tag);
 
-                    Notice_Tag notice_tag = new Notice_Tag();
-                    notice_tag.setNotice(noticeService.findById(id));
-                    notice_tag.setTag(tag);
-                    notice_tagService.save(notice_tag);
+                        Notice_Tag notice_tag = new Notice_Tag();
+                        notice_tag.setNotice(noticeService.findById(id));
+                        notice_tag.setTag(tag);
+                        notice_tagService.save(notice_tag);
 
-                }
-                // 있는 태그면 Notice_Tag만 생성
-                else {
-                    Notice_Tag notice_tag = new Notice_Tag();
-                    notice_tag.setNotice(noticeService.findById(id));
-                    notice_tag.setTag(tagService.findByName(tag_name));
-                    notice_tagService.save(notice_tag);
+                    }
+                    // 있는 태그면 Notice_Tag만 생성
+                    else {
+                        Notice_Tag notice_tag = new Notice_Tag();
+                        notice_tag.setNotice(noticeService.findById(id));
+                        notice_tag.setTag(tagService.findByName(tag_name));
+                        notice_tagService.save(notice_tag);
+                    }
                 }
             }
+            return new NoticeResponse(id);
         }
-        return new NoticeResponse(id);
-
+        else
+            return null;
     }
 
 
@@ -113,43 +116,49 @@ public class NoticeApiController {
     @PutMapping("notice/{id}")
     public NoticeResponse updateNotice(@PathVariable("id") Long id,
             @RequestBody @Valid NoticeRequest request) {
-        noticeService.update(id, request.title, request.explanation, request.deadline);
-        notice_tagService.deleteByNoticeId(id);
+        if(memberService.findById(SecurityUtil.getCurrentMemberId()).get().getAuthority() == Authority.ROLE_ADMIN) {
+            noticeService.update(id, request.title, request.explanation, request.deadline);
+            notice_tagService.deleteByNoticeId(id);
 
-        // 중복 코드 없애면 좋을텐데,, 나중에 ㄱㄱ
-        List<String> tags = request.tags;
-        if (tags != null) {
-            for (String tag_name : tags) {
-                // 없는 태그면 Tag 생성하고 Notice_Tag 생성
-                if (tagService.findByName(tag_name) == null) {
-                    Tag tag = new Tag();
-                    tag.setName(tag_name);
-                    tagService.save(tag);
+            // 중복 코드 없애면 좋을텐데,, 나중에 ㄱㄱ
+            List<String> tags = request.tags;
+            if (tags != null) {
+                for (String tag_name : tags) {
+                    // 없는 태그면 Tag 생성하고 Notice_Tag 생성
+                    if (tagService.findByName(tag_name) == null) {
+                        Tag tag = new Tag();
+                        tag.setName(tag_name);
+                        tagService.save(tag);
 
-                    Notice_Tag notice_tag = new Notice_Tag();
-                    notice_tag.setNotice(noticeService.findById(id));
-                    notice_tag.setTag(tag);
-                    notice_tagService.save(notice_tag);
+                        Notice_Tag notice_tag = new Notice_Tag();
+                        notice_tag.setNotice(noticeService.findById(id));
+                        notice_tag.setTag(tag);
+                        notice_tagService.save(notice_tag);
 
-                }
-                // 있는 태그면 Notice_Tag만 생성
-                else {
-                    Notice_Tag notice_tag = new Notice_Tag();
-                    notice_tag.setNotice(noticeService.findById(id));
-                    notice_tag.setTag(tagService.findByName(tag_name));
-                    notice_tagService.save(notice_tag);
+                    }
+                    // 있는 태그면 Notice_Tag만 생성
+                    else {
+                        Notice_Tag notice_tag = new Notice_Tag();
+                        notice_tag.setNotice(noticeService.findById(id));
+                        notice_tag.setTag(tagService.findByName(tag_name));
+                        notice_tagService.save(notice_tag);
+                    }
                 }
             }
-        }
 
-        return new NoticeResponse(id);
+            return new NoticeResponse(id);
+        }
+        else
+            return null;
     }
 
     @Operation(summary = "공지사항 삭제")
     @DeleteMapping("notice/{id}")
     public void deleteNotice(@PathVariable("id") Long id) {
-        notice_tagService.deleteByNoticeId(id);
-        noticeService.delete(id);
+        if(memberService.findById(SecurityUtil.getCurrentMemberId()).get().getAuthority() == Authority.ROLE_ADMIN) {
+            notice_tagService.deleteByNoticeId(id);
+            noticeService.delete(id);
+        }
     }
 
 
