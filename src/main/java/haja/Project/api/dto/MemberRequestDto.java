@@ -1,6 +1,7 @@
 package haja.Project.api.dto;
 
 import haja.Project.domain.Authority;
+import haja.Project.domain.Image;
 import haja.Project.domain.Member;
 import lombok.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,7 +22,9 @@ public class MemberRequestDto {
                 .email(email)
                 .password(passwordEncoder.encode(password))
                 .authority(Authority.ROLE_USER)
+                .image(new Image("https://lionz.kro.kr/member/img/DefaultProfile.png","DefaultProfile.png","/home/img/"))
                 .build();
+
     }
 
     public UsernamePasswordAuthenticationToken toAuthentication() {
