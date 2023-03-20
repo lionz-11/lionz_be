@@ -10,6 +10,7 @@ import java.time.Instant;
 @Builder
 public class TokenDto {
 
+    private Long id;
     private String grantType;
     private String accessToken;
     private String refreshToken;
