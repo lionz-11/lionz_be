@@ -91,7 +91,7 @@ public class NoticeApiController {
     }
 
     @Operation(summary = "파트별 공지사항 조회", description = "target에는 FE, BE, ALL이 들어갑니다")
-    @GetMapping("notice/{target}")
+    @GetMapping("notice/part/{target}")
     public Result readNoticeByPart(@PathVariable("target") String target) {
         List<Notice> notices = noticeService.findByTarget(target);
         List<NoticeDto> collect = notices.stream().map(n -> new NoticeDto(n))
@@ -103,12 +103,13 @@ public class NoticeApiController {
     @GetMapping("notice/{id}")
     public NoticeDto FindOne(@PathVariable("id") Long id) {
         NoticeDto d = new NoticeDto(noticeService.findById(id));
+        System.out.println("d = " + d);
 
         List<Notice_Tag> tags = notice_tagService.findByNotice(d.id);
         for (Notice_Tag tag: tags) {
             d.tag.add(tag.getTag().getName());
         }
-
+        System.out.println("d2 = " + d);
         return d;
     }
 
