@@ -12,6 +12,7 @@ import haja.Project.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.imgscalr.Scalr;
 import org.springframework.http.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -42,14 +44,28 @@ import java.util.stream.Collectors;
 @Tag(name = "Member")
 public class MemberController {
     private final MemberService memberService;
+    private final PasswordEncoder passwordEncoder;
 
-    @Operation(summary = "멤버 수정")
-    @PutMapping
-    public MemberDto updateMember(@RequestBody @Valid MemberUpdateRequest request) {
+    @Operation(summary = "멤버 코멘트 수정")
+    @PutMapping("comment")
+    public MemberDto updateMemberComment(@RequestBody @Valid MemberUpdateCommentRequest request) {
         Member member = memberService.findById(SecurityUtil.getCurrentMemberId()).get();
-        memberService.update(SecurityUtil.getCurrentMemberId(), request.phone_num, request.part, request.comment, request.major, request.student_id);
+        memberService.updateComment(SecurityUtil.getCurrentMemberId(), request.getComment());
         return new MemberDto(member);
     }
+    @Operation(summary = "멤버 비밀번호 수정")
+    @PutMapping("password")
+    public MemberDto updateMemberPassword(@RequestBody @Valid MemberUpdatePasswordRequest request) {
+        if(request.getPassword() != null) {
+            Member member = memberService.findById(SecurityUtil.getCurrentMemberId()).get();
+            memberService.updatePassword(SecurityUtil.getCurrentMemberId(),
+                    passwordEncoder.encode(request.getPassword()));
+            return new MemberDto(member);
+        }
+        else
+            return null;
+    }
+
 
     @Operation(summary = "멤버 프로필 업로드")
     @PostMapping(value = "/img", consumes =  MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -143,14 +159,14 @@ public class MemberController {
 
 
     @Data
-    static class MemberUpdateRequest {
-        String phone_num;
-        Part part;
+    static class MemberUpdateCommentRequest {
         String comment;
-        String major;
-        String student_id;
-
     }
+    @Data
+    static class MemberUpdatePasswordRequest {
+        String password;
+    }
+
     @Data
     static class MemberDto {
         Long id;
