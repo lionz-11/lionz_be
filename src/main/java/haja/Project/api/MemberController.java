@@ -65,7 +65,7 @@ public class MemberController {
         //String img_path = "C:\\Users\\kjk87\\Desktop\\img\\" + file_name;
         String img_path = "/home/img/" + file_name;
         //String img_link = "http://localhost:8080/member/img/" + file_name;
-        String img_link = "https://lionz.kro.kr/member/img/" + file_name;
+        String img_link = "https://lionz.kro.kr/member/img/" + member.getId();
         File dest = new File(img_path);
 
         // 이미지 용량 제한
