@@ -61,7 +61,7 @@ public class MemberController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        String file_name = date.getTime() + member.getStudent_id() + file.getOriginalFilename();
+        String file_name = date.getTime() + file.getOriginalFilename();
         //String img_path = "C:\\Users\\kjk87\\Desktop\\img\\" + file_name;
         String img_path = "/home/img/" + file_name;
         //String img_link = "http://localhost:8080/member/img/" + file_name;
@@ -69,8 +69,9 @@ public class MemberController {
         File dest = new File(img_path);
 
         // 이미지 용량 제한
+        String format = file_name.substring(file_name.lastIndexOf(".") + 1);
         BufferedImage bufferedImage = Scalr.resize(ImageIO.read(file.getInputStream()), 1000, 1000, Scalr.OP_ANTIALIAS);
-        ImageIO.write(bufferedImage, "jpg", dest);
+        ImageIO.write(bufferedImage, format, dest);
 
         Image image = new Image(img_link, file_name, img_path);
         memberService.setImage(member, image);
@@ -107,15 +108,15 @@ public class MemberController {
     }
 
     @Operation(summary = "멤버 id로 프로필 조회")
-    @GetMapping(value = "/img/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
-    public ResponseEntity<byte[]> getImage(@PathVariable("id") Long id) throws IOException {
-        Image image = memberService.findById(id).get().getImage();
-
-        InputStream inputStream = new FileInputStream(image.img_path);
+    @GetMapping(value = "/img/{name}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> getImage(@PathVariable("name") String name) throws IOException {
+        String path = "C:\\Users\\kjk87\\Desktop\\img\\";
+        //String path = "/home/img/";
+        InputStream inputStream = new FileInputStream(path + name);
         byte[] bytes = inputStream.readAllBytes();
         inputStream.close();
         HttpHeaders header = new HttpHeaders();
-        header.add("Content-Type", Files.probeContentType(Paths.get(image.img_path)));
+        header.add("Content-Type", Files.probeContentType(Paths.get(path + name)));
         return new ResponseEntity<byte[]>(bytes, header, HttpStatus.OK);
     }
 
