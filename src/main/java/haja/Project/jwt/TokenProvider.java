@@ -59,7 +59,7 @@ public class TokenProvider {
                 .compact();
 
         return TokenDto.builder()
-                .id(SecurityUtil.getCurrentMemberId())
+                .id(authentication.getName())
                 .grantType(BEARER_TYPE)
                 .accessToken(accessToken)
                 .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
