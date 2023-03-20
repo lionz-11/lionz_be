@@ -47,7 +47,7 @@ public class Member {
 
 
     @Builder
-    public Member(Long id, String email, String password, Authority authority, String name, String phone_num, Part part, String comment, String major, String student_id) {
+    public Member(Long id, String email, String password, Authority authority, String name, String phone_num, Part part, String comment, String major, String student_id, Image image) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -58,6 +58,7 @@ public class Member {
         this.comment = comment;
         this.major = major;
         this.student_id = student_id;
+        this.image = image;
     }
 /*
 

@@ -110,26 +110,26 @@ public class MemberController {
     @Operation(summary = "id로 멤버 조회")
     @GetMapping("/{id}")
     public MemberDto findMemberInfoById(@PathVariable("id") Long id) {
-        return new MemberDto(memberService.findById(id).get());
-    }
+            return new MemberDto(memberService.findById(id).get());
+        }
 
-    @Operation(summary = "전체 멤버 조회")
-    @GetMapping("/all")
-    public Result findAllMember() {
-        List<Member> members = memberService.findAll();
-        List<MemberDto> memberResult = members.stream()
-                .map(member -> new MemberDto(member))
-                .collect(Collectors.toList());
-        return new Result(memberResult);
-    }
+        @Operation(summary = "전체 멤버 조회")
+        @GetMapping("/all")
+        public Result findAllMember() {
+            List<Member> members = memberService.findAll();
+            List<MemberDto> memberResult = members.stream()
+                    .map(member -> new MemberDto(member))
+                    .collect(Collectors.toList());
+            return new Result(memberResult);
+        }
 
-    @Operation(summary = "멤버 id로 프로필 조회")
-    @GetMapping(value = "/img/{name}", produces = MediaType.IMAGE_JPEG_VALUE)
-    public ResponseEntity<byte[]> getImage(@PathVariable("name") String name) throws IOException {
-        //String path = "C:\\Users\\kjk87\\Desktop\\img\\";
-        String path = "/home/img/";
-        InputStream inputStream = new FileInputStream(path + name);
-        byte[] bytes = inputStream.readAllBytes();
+        @Operation(summary = "멤버 id로 프로필 조회")
+        @GetMapping(value = "/img/{name}", produces = MediaType.IMAGE_JPEG_VALUE)
+        public ResponseEntity<byte[]> getImage(@PathVariable("name") String name) throws IOException {
+            //String path = "C:\\Users\\kjk87\\Desktop\\img\\";
+            String path = "/home/img/";
+            InputStream inputStream = new FileInputStream(path + name);
+            byte[] bytes = inputStream.readAllBytes();
         inputStream.close();
         HttpHeaders header = new HttpHeaders();
         header.add("Content-Type", Files.probeContentType(Paths.get(path + name)));
