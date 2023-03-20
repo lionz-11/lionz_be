@@ -22,7 +22,7 @@ public class MemberRequestDto {
                 .email(email)
                 .password(passwordEncoder.encode(password))
                 .authority(Authority.ROLE_USER)
-                .image(new Image("https://lionz.kro.kr/member/img/DefaultProfile.png","DefaultProfile.png","/home/img/"))
+                .image(new Image("https://lionz.kro.kr/member/img/DefaultProfile.png","DefaultProfile.png","/home/img/DefaultProfile.png"))
                 .build();
 
     }
