@@ -98,11 +98,10 @@ public class TaskApiController {
 
     //수정하기 버튼 -> 이전내용 그대로 가져오기위함
     @Operation(summary = "id로 과제 조회")
-    @PostMapping("task/{id}")
+    @GetMapping("task/{id}")
     public Task task(@PathVariable("id") Long id) {
         return taskService.findOne(id);
     }
-
 
     //수정완료 버튼
     @Operation(summary = "과제 수정")

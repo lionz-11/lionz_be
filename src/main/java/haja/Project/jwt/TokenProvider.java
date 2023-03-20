@@ -1,6 +1,7 @@
 package haja.Project.jwt;
 
 import haja.Project.api.dto.TokenDto;
+import haja.Project.util.SecurityUtil;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -58,6 +59,7 @@ public class TokenProvider {
                 .compact();
 
         return TokenDto.builder()
+                .id(SecurityUtil.getCurrentMemberId())
                 .grantType(BEARER_TYPE)
                 .accessToken(accessToken)
                 .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
