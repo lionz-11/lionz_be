@@ -119,7 +119,7 @@ public class MemberController {
         header.add("Content-Type", Files.probeContentType(Paths.get(path + name)));
         return new ResponseEntity<byte[]>(bytes, header, HttpStatus.OK);
     }
-
+//에휴ㅅㅂ
     @Operation(summary = "현재 로그인한 멤버의 프로필 삭제")
     @DeleteMapping(value = "/img")
     public void deleteImage() {
