@@ -91,7 +91,7 @@ public class NoticeApiController {
     }
 
     @Operation(summary = "파트별 공지사항 조회", description = "target에는 FE, BE, ALL이 들어갑니다")
-    @GetMapping("notice/{target}")
+    @GetMapping("notice/part/{target}")
     public Result readNoticeByPart(@PathVariable("target") String target) {
         List<Notice> notices = noticeService.findByTarget(target);
         List<NoticeDto> collect = notices.stream().map(n -> new NoticeDto(n))

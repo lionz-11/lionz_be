@@ -111,7 +111,7 @@ public class TasknoticeApiController {
     @GetMapping("tasknotice/{id}")
     public TasknoticeDto tasknotice(
             @PathVariable("id") Long id){
-        if(memberService.findById(SecurityUtil.getCurrentMemberId()).get().getAuthority() == Authority.ROLE_ADMIN) {
+
             TasknoticeDto d = new TasknoticeDto(tasknoticeService.findOne(id)); //이렇게 하면 Json이 그대로 오는것을 확인함
             //그니까 수정하기 버튼 누르면 이렇게 주고
             //수정완료 버튼 누르면 request날라온거 set으로 ㄱㄱ
@@ -125,9 +125,6 @@ public class TasknoticeApiController {
             }
 
             return d;
-        }
-        else
-            return null;
 
     }
 
