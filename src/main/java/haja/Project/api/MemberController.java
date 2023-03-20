@@ -65,7 +65,7 @@ public class MemberController {
         //String img_path = "C:\\Users\\kjk87\\Desktop\\img\\" + file_name;
         String img_path = "/home/img/" + file_name;
         //String img_link = "http://localhost:8080/member/img/" + file_name;
-        String img_link = "https://lionz.kro.kr/member/img/" + member.getId();
+        String img_link = "https://lionz.kro.kr/member/img/" + file_name;
         File dest = new File(img_path);
 
         // 이미지 용량 제한
@@ -110,8 +110,8 @@ public class MemberController {
     @Operation(summary = "멤버 id로 프로필 조회")
     @GetMapping(value = "/img/{name}", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<byte[]> getImage(@PathVariable("name") String name) throws IOException {
-        String path = "C:\\Users\\kjk87\\Desktop\\img\\";
-        //String path = "/home/img/";
+        //String path = "C:\\Users\\kjk87\\Desktop\\img\\";
+        String path = "/home/img/";
         InputStream inputStream = new FileInputStream(path + name);
         byte[] bytes = inputStream.readAllBytes();
         inputStream.close();
@@ -119,7 +119,7 @@ public class MemberController {
         header.add("Content-Type", Files.probeContentType(Paths.get(path + name)));
         return new ResponseEntity<byte[]>(bytes, header, HttpStatus.OK);
     }
-
+//에휴ㅅㅂ
     @Operation(summary = "현재 로그인한 멤버의 프로필 삭제")
     @DeleteMapping(value = "/img")
     public void deleteImage() {
