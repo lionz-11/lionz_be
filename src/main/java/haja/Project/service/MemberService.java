@@ -47,17 +47,20 @@ public class MemberService {
     }
 
     @Transactional
-    public Long update(Long id, String phone_num, Part part, String comment, String major, String student_id) {
+    public Long updateComment(Long id, String comment) {
         Member member = findById(id).get();
-        member.setPhone_num(phone_num);
-        member.setPart(part);
         member.setComment(comment);
-        member.setMajor(major);
-        member.setStudent_id(student_id);
         memberRepository.save(member);
         return member.getId();
     }
 
+    @Transactional
+    public Long updatePassword(Long id, String password) {
+        Member member = findById(id).get();
+        member.setPassword(password);
+        memberRepository.save(member);
+        return member.getId();
+    }
     @Transactional
     public void setImage(Member member, Image image) {
         member.setImage(image);
