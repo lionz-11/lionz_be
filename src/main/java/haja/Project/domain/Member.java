@@ -5,9 +5,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 @Getter @Setter
 @NoArgsConstructor
+@DynamicInsert
 @Table(name = "member")
 @Entity
 public class Member {
@@ -30,6 +33,7 @@ public class Member {
     @Column(name = "phone_num")
     private String phone_num;
 
+    @Enumerated(EnumType.STRING) //이거 안넣으니까 DB에서 수정이 안되었다는 슬픈 사실이..
     @Column(name = "part")
     private Part part;
 
@@ -44,6 +48,10 @@ public class Member {
 
     @Embedded
     private Image image;
+
+    @Column(name = "member_count",nullable = false)
+    @ColumnDefault("0")
+    private Integer count;
 
 
     @Builder

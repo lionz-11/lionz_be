@@ -4,13 +4,14 @@ import lombok.*;
 
 import java.time.Instant;
 
-@Getter
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class TokenDto {
 
     private String id;
+    private Integer count;
     private String grantType;
     private String accessToken;
     private String refreshToken;

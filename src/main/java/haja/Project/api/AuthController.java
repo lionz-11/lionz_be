@@ -4,7 +4,10 @@ import haja.Project.api.dto.MemberRequestDto;
 import haja.Project.api.dto.MemberResponseDto;
 import haja.Project.api.dto.TokenDto;
 import haja.Project.api.dto.TokenRequestDto;
+import haja.Project.domain.Member;
 import haja.Project.service.AuthService;
+import haja.Project.service.MemberService;
+import haja.Project.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Auth")
 public class AuthController {
     private final AuthService authService;
+    private final MemberService memberService;
 
     @Operation(summary = "회원가입")
     @PostMapping("/signup")
