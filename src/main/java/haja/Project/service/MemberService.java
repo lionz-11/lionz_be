@@ -71,6 +71,5 @@ public class MemberService {
     public void updateCount(Member member,Integer c){
         member.setCount(c + 1);
         memberRepository.save(member);
-        System.out.println("member.getCount() = " + member.getCount());
     }
 }
