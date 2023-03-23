@@ -8,6 +8,7 @@ import haja.Project.domain.RefreshToken;
 import haja.Project.jwt.TokenProvider;
 import haja.Project.repository.MemberRepository;
 import haja.Project.repository.RefreshTokenRepository;
+import haja.Project.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -24,6 +25,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final MemberService memberService;
 
     @Transactional
     public MemberResponseDto signup(MemberRequestDto memberRequestDto) {
@@ -39,13 +41,19 @@ public class AuthService {
     public TokenDto login(MemberRequestDto memberRequestDto) {
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = memberRequestDto.toAuthentication();
-
+        System.out.println("memberRequestDto = " + memberRequestDto.getEmail());
         // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
         //    authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByUsername 메서드가 실행됨
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
+
+        // (추가)로그인 횟수 체크 (1번 한거면(즉,최초 로그인이면) 바로 비밀번호 수정페이지로 넘어가게 하려고)
+        //Member member = memberService.findByEmail(memberRequestDto.getEmail());
+        Member member = memberService.findByEmail(memberRequestDto.getEmail()).get();
+        tokenDto.setCount(member.getCount());
+        memberService.updateCount(member,member.getCount());
 
         // 4. RefreshToken 저장
         RefreshToken refreshToken = RefreshToken.builder()

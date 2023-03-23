@@ -66,4 +66,10 @@ public class MemberService {
         member.setImage(image);
         memberRepository.save(member);
     }
+
+    @Transactional
+    public void updateCount(Member member,Integer c){
+        member.setCount(c + 1);
+        memberRepository.save(member);
+    }
 }

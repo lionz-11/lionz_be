@@ -37,7 +37,7 @@ public class Task_TagRepository {
     public List<Task_Tag> findByTagName(String name){
         return em.createQuery("select tt from Task_Tag tt join tt.task tk join tt.tag tg "
                         +"where tg.name Like :name and tt.tag.id = tg.id and tt.task.id = tk.id",Task_Tag.class)
-                .setParameter("name",name)
+                .setParameter("name","%"+name+"%")
                 .getResultList();
     }
 

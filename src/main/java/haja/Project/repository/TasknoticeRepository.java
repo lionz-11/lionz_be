@@ -49,8 +49,8 @@ public class TasknoticeRepository {
 
     //title or explanation으로 검색 (AllSearch에 사용됨)
     public List<Tasknotice> findByWord(String word){  //and가 아니라 or!
-        return em.createQuery("select t from Tasknotice t where t.title Like :word or t.explanation Like :word", Tasknotice.class)
-                .setParameter("word",word)
+        return em.createQuery("select t from Tasknotice t where t.title like :word or t.explanation Like :word", Tasknotice.class)
+                .setParameter("word","%"+word+"%")
                 .getResultList();
     }
 

@@ -45,7 +45,7 @@ public class TaskRepository {
     //explanation으로 검색 (AllSearch에 사용됨)
     public List<Task> findByWord(String word){  //and가 아니라 or!
         return em.createQuery("select t from Task t where t.explanation Like :word", Task.class)
-                .setParameter("word",word)
+                .setParameter("word","%"+word+"%")
                 .getResultList();
     }
 
