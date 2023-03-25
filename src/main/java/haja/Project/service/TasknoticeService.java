@@ -29,6 +29,10 @@ public class TasknoticeService {
         return tasknoticeRepository.findAll();
     }
 
+    public List<Tasknotice> findPartAll() {
+        return tasknoticeRepository.findPartAll();
+    }
+
     public List<Tasknotice> findFe() { return tasknoticeRepository.findFe(); }
 
     public List<Tasknotice> findBe() { return tasknoticeRepository.findBe(); }
