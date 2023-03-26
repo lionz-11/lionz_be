@@ -47,6 +47,7 @@ public class TasknoticeApiController {
             tasknotice.setTarget(request.getTarget());
             tasknotice.setTitle(request.getTitle());
             tasknotice.setExplanation(request.getExplanation());
+            tasknotice.setLink(request.getLink());
 
             Long id = tasknoticeService.save(tasknotice);
 
@@ -84,7 +85,7 @@ public class TasknoticeApiController {
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")  //데드라인을 어떤형식으로 받을지 명시
         private LocalDateTime deadline;
         private Part target;
-        //private File image; // 이건 나중에
+        private String link;
         private String title;
         private String explanation;
         private List<String> tags;
@@ -136,7 +137,7 @@ public class TasknoticeApiController {
             tn.setTarget(request.getTarget());
             tn.setTitle(request.getTitle());
             tn.setExplanation(request.getExplanation());
-
+            tn.setLink(request.getLink());
             Long tn_id = tasknoticeService.save(tn);
             //이러면 이제 과제공지글을 생성이 된거고 이 때 request로 tag_id받고 아래에 tasknoticetag로직 추가
             //request로 tag_id를 어떻게받을까 List로 받아서 for문으로 돌리자
@@ -186,7 +187,7 @@ public class TasknoticeApiController {
         //private File image; // 이건 나중에
         private String title;
         private String explanation;
-
+        private String link;
         private List<String> tags;
         private List<Long> data;
     }
@@ -251,7 +252,7 @@ public class TasknoticeApiController {
         private File image;
         private String title;
         private String explanation;
-
+        private String link;
         private List<String> tag;
 
         private Boolean isSubmit;
@@ -268,6 +269,7 @@ public class TasknoticeApiController {
             explanation = tasknotice.getExplanation();
             isSubmit = false;
             tag = new ArrayList<>();
+            link = tasknotice.getLink();
         }
     }
 
