@@ -9,9 +9,6 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
@@ -213,6 +210,7 @@ public class TasknoticeApiController {
     public void deleteTasknotice(@PathVariable("id") Long id) {
         if(memberService.findById(SecurityUtil.getCurrentMemberId()).get().getAuthority() == Authority.ROLE_ADMIN) {
             tasknotice_tagService.deleteByTasknoticeId(id);
+            taskService.deleteByTasknotice(id);
             tasknoticeService.delete(id);
         }
     }
@@ -266,7 +264,6 @@ public class TasknoticeApiController {
             deadline = tasknotice.getDeadline();
             //updatetime = tasknotice.getUpdateTime();
             target = tasknotice.getTarget();
-            image = tasknotice.getImage();
             title = tasknotice.getTitle();
             explanation = tasknotice.getExplanation();
             isSubmit = false;

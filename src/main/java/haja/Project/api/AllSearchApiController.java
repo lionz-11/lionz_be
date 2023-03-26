@@ -26,7 +26,6 @@ public class AllSearchApiController {
     private final TasknoticeService tasknoticeService;
     private final TaskService taskService;
     private final Tasknotice_TagService tasknotice_tagService;
-    private final Task_TagService task_tagService;
 
 
     @io.swagger.v3.oas.annotations.tags.Tag(name = "통합검색")
@@ -49,12 +48,7 @@ public class AllSearchApiController {
                 .map(t -> new Tasknotice_TagDto(t))
                 .collect(Collectors.toList());
 
-        List<Task_Tag> tts = task_tagService.findByTagName(request.getWord());
-        List<Task_TagDto> collect4 = tts.stream()
-                .map(t -> new Task_TagDto(t))
-                .collect(Collectors.toList());
-
-        return new Result(collect,collect2,collect3,collect4);
+        return new Result(collect,collect2,collect3);
     }
 
 
@@ -79,7 +73,6 @@ public class AllSearchApiController {
             deadline = tasknotice.getDeadline();
             //updatetime = tasknotice.getUpdateTime();
             target = tasknotice.getTarget();
-            image = tasknotice.getImage();
             title = tasknotice.getTitle();
             explanation = tasknotice.getExplanation();
         }
@@ -117,20 +110,6 @@ public class AllSearchApiController {
             tag = tasknotice_tag.getTag();
         }
     }
-
-    @Data
-    @AllArgsConstructor
-    static class Task_TagDto{
-        private Long id;
-        private Task task;
-        private Tag tag;
-
-        Task_TagDto(Task_Tag task_tag){
-            id = task_tag.getId();
-            task = task_tag.getTask();
-            tag = task_tag.getTag();
-        }
-    }
     @Data
     static class AllSearchRequest{
         private String word;
@@ -142,7 +121,6 @@ public class AllSearchApiController {
         private TN tasknotice;
         private T task;
         private TNT tasknotice_tag;
-        private TKT task_tag;
     }
 
 

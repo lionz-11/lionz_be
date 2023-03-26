@@ -15,6 +15,11 @@ public class TaskRepository {
     @PersistenceContext
     private EntityManager em;
 
+    public List<Task> findByMember(Long id) {
+        return em.createQuery("select t from Task t where t.member.id = :id")
+                .setParameter("id", id)
+                .getResultList();
+    }
     public void save(Task task){
         em.persist(task);
     }
@@ -36,9 +41,21 @@ public class TaskRepository {
         return task.stream().findAny();
     }
 
+    public List<Task> findByTasknotice(Long id) {
+        return em.createQuery("select t from Task t where t.tasknotice.id = :id")
+                .setParameter("id", id)
+                .getResultList();
+    }
+
     public void delete(Long id){
         em.createQuery("delete from Task t where t.id = :id")
                 .setParameter("id",id)
+                .executeUpdate();
+    }
+
+    public void deleteByTasknotice(Long id) {
+        em.createQuery("delete from Task t where t.tasknotice.id = :id")
+                .setParameter("id", id)
                 .executeUpdate();
     }
 

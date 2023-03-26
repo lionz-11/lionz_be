@@ -32,8 +32,8 @@ public class Tasknotice {
     @Column(name = "tasknotice_target")
     private Part target;
 
-    @Column(name = "tasknotice_image")
-    private File image; // String->File
+    @Column(name = "tasknotice_link")
+    private String link; // String->File
 
     @Column(name = "tasknotice_title")
     private String title;
