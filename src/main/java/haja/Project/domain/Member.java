@@ -53,7 +53,6 @@ public class Member {
     @ColumnDefault("0")
     private Integer count;
 
-
     @Builder
     public Member(Long id, String email, String password, Authority authority, String name, String phone_num, Part part, String comment, String major, String student_id, Image image) {
         this.id = id;

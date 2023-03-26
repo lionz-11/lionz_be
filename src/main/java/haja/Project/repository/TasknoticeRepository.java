@@ -58,6 +58,12 @@ public class TasknoticeRepository {
                 .getResultList();
     }
 
+
+    public List<Tasknotice> findByMember(Long id) {
+        return em.createQuery("select t from Tasknotice  t where t.member.id = :id", Tasknotice.class)
+                .setParameter("id", id)
+                .getResultList();
+    }
     //삭제
 
     public void deleteTasknotice(Long id) {

@@ -23,12 +23,19 @@ public class TaskService {
         return task.getId();
     }
 
+    public List<Task> findByTasknotice(Long id) {
+        return taskRepository.findByTasknotice(id);
+    }
     public Task findOne(Long id){
         return taskRepository.findOne(id);
     }
 
     public List<Task> findAll(){
         return taskRepository.findAll();
+    }
+
+    public List<Task> findByMember(Long id) {
+        return taskRepository.findByMember(id);
     }
 
     public boolean isSubmit(Long tasknotice_id) {
@@ -40,6 +47,9 @@ public class TaskService {
     public void delete(Long id){
         taskRepository.delete(id);
     }
+
+    @Transactional
+    public void deleteByTasknotice(Long id) { taskRepository.deleteByTasknotice(id); }
 
     public List<Task> findByWord(String word){
         return taskRepository.findByWord(word);
