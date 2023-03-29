@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -37,7 +38,7 @@ public class NoticeApiController {
             notice.setMember(memberService.findById(SecurityUtil.getCurrentMemberId()).get());
             notice.setTitle(request.title);
             notice.setExplanation(request.explanation);
-            notice.setDate(LocalDate.now());
+            notice.setDate(LocalDateTime.now());
             notice.setDeadline(request.deadline);
             notice.setTarget(request.target);
 
@@ -186,7 +187,8 @@ public class NoticeApiController {
         Member member;
         String title;
         String explanation;
-        LocalDate date;
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+        LocalDateTime date;
         Part target;
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
         LocalDateTime deadline;
