@@ -32,8 +32,9 @@ public class Notice {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "notice_date")
-    private LocalDate date;
+    private LocalDateTime date;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "notice_deadline")
     private LocalDateTime deadline;
 
