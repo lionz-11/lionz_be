@@ -19,7 +19,7 @@ public class Task {
     @Column(name = "task_link")
     private String link;
 
-    @Column(name = "task_explanation")
+    @Column(name = "task_explanation", columnDefinition = "TEXT")
     private String explanation;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
