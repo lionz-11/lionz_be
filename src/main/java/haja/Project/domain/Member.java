@@ -8,6 +8,9 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+
 @Getter @Setter
 @NoArgsConstructor
 @DynamicInsert
@@ -52,6 +55,9 @@ public class Member {
     @Column(name = "member_count",nullable = false)
     @ColumnDefault("0")
     private Integer count;
+
+    @Column(name = "Token_count")
+    private LocalDateTime accessTokenExpiresIn;
 
     @Builder
     public Member(Long id, String email, String password, Authority authority, String name, String phone_num, Part part, String comment, String major, String student_id, Image image) {
