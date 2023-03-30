@@ -30,6 +30,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -177,6 +180,7 @@ public class MemberController {
         String major;
         String student_id;
         Image image;
+        Long accessTokenExpiresIn;
 
         public MemberDto(Member member) {
             this.id = member.getId();
@@ -189,6 +193,7 @@ public class MemberController {
             this.major = member.getMajor();
             this.student_id = member.getStudent_id();
             this.image = member.getImage();
+            this.accessTokenExpiresIn = Duration.between(LocalDateTime.now(), member.getAccessTokenExpiresIn()).toMinutes();
         }
     }
 }

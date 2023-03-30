@@ -39,7 +39,7 @@ public class NoticeRepository {
         notice.setTitle(title);
         notice.setExplanation(explanation);
         notice.setDeadline(deadline);
-        notice.setDate(LocalDate.now());
+        notice.setDate(LocalDateTime.now());
     }
 
     public void delete(Long id) {

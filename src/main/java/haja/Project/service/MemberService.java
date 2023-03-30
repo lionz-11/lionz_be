@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,6 +66,12 @@ public class MemberService {
     @Transactional
     public void setImage(Member member, Image image) {
         member.setImage(image);
+        memberRepository.save(member);
+    }
+
+    @Transactional
+    public void setTokenCount(Member member, LocalDateTime date) {
+        member.setAccessTokenExpiresIn(date);
         memberRepository.save(member);
     }
 
