@@ -35,6 +35,7 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 // 사진을 100kb로 줄이자
@@ -112,17 +113,17 @@ public class MemberController {
     @GetMapping("/{id}")
     public MemberDto findMemberInfoById(@PathVariable("id") Long id) {
             return new MemberDto(memberService.findById(id).get());
-        }
+    }
 
-        @Operation(summary = "전체 멤버 조회")
-        @GetMapping("/all")
-        public Result findAllMember() {
-            List<Member> members = memberService.findAll();
-            List<MemberDto> memberResult = members.stream()
-                    .map(member -> new MemberDto(member))
-                    .collect(Collectors.toList());
-            return new Result(memberResult);
-        }
+    @Operation(summary = "전체 멤버 조회")
+    @GetMapping("/all")
+    public Result findAllMember() {
+        List<Member> members = memberService.findAll();
+        List<MemberDto> memberResult = members.stream()
+                .map(member -> new MemberDto(member))
+                .collect(Collectors.toList());
+        return new Result(memberResult);
+    }
 
         @Operation(summary = "멤버 id로 프로필 조회")
         @GetMapping(value = "/img/{name}", produces = MediaType.IMAGE_JPEG_VALUE)
@@ -193,7 +194,9 @@ public class MemberController {
             this.major = member.getMajor();
             this.student_id = member.getStudent_id();
             this.image = member.getImage();
-            this.accessTokenExpiresIn = Duration.between(LocalDateTime.now(), member.getAccessTokenExpiresIn()).toMinutes();
+            if (member.getAccessTokenExpiresIn()!=null) {
+                this.accessTokenExpiresIn = Duration.between(LocalDateTime.now(), member.getAccessTokenExpiresIn()).toMinutes();
+            } else this.accessTokenExpiresIn = null;
         }
     }
 }
