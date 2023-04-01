@@ -16,7 +16,7 @@ public class Task {
     @Column(name = "task_id")
     private Long id;
 
-    @Column(name = "task_link")
+    @Column(name = "task_link", columnDefinition = "TEXT")
     private String link;
 
     @Column(name = "task_explanation", columnDefinition = "TEXT")

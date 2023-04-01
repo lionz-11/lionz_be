@@ -35,13 +35,13 @@ public class Tasknotice {
     @Column(name = "tasknotice_target")
     private Part target;
 
-    @Column(name = "tasknotice_link")
+    @Column(name = "tasknotice_link", columnDefinition = "TEXT")
     private String link; // String->File
 
     @Column(name = "tasknotice_title")
     private String title;
 
-    @Column(name = "tasknotice_explanation")
+    @Column(name = "tasknotice_explanation", columnDefinition = "TEXT")
     private String explanation;
 
     /*
