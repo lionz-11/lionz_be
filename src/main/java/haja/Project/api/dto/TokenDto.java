@@ -3,6 +3,8 @@ package haja.Project.api.dto;
 import lombok.*;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Getter @Setter
 @NoArgsConstructor
@@ -15,5 +17,5 @@ public class TokenDto {
     private String grantType;
     private String accessToken;
     private String refreshToken;
-    private Long accessTokenExpiresIn;
+    private LocalDateTime accessTokenExpiresIn;
 }

@@ -3,6 +3,7 @@ package haja.Project.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -22,9 +23,11 @@ public class Tasknotice {
     @JoinColumn(name = "member_id")  //이거 name = "tasknotice_write"로 봐꿔야하나
     private Member member;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "tasknotice_date")
     private LocalDateTime date;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "tasknotice_deadline")
     private LocalDateTime deadline;
 
@@ -32,13 +35,13 @@ public class Tasknotice {
     @Column(name = "tasknotice_target")
     private Part target;
 
-    @Column(name = "tasknotice_image")
-    private File image; // String->File
+    @Column(name = "tasknotice_link", columnDefinition = "TEXT")
+    private String link; // String->File
 
     @Column(name = "tasknotice_title")
     private String title;
 
-    @Column(name = "tasknotice_explanation")
+    @Column(name = "tasknotice_explanation", columnDefinition = "TEXT")
     private String explanation;
 
     /*

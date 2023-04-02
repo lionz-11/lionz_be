@@ -9,9 +9,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
@@ -50,6 +48,7 @@ public class TasknoticeApiController {
             tasknotice.setTarget(request.getTarget());
             tasknotice.setTitle(request.getTitle());
             tasknotice.setExplanation(request.getExplanation());
+            tasknotice.setLink(request.getLink());
 
             Long id = tasknoticeService.save(tasknotice);
 
@@ -84,14 +83,10 @@ public class TasknoticeApiController {
     static class CreateTasknoticeRequest{
         //private User user; //원래 이렇게 객체로 받고싶었는데 postman으로 그게 안돼서
         //private Long user_id;  // -> request로 user 정보를 받는게 아니니까 빼도 될듯
-
-        @CreatedDate
-        private LocalDateTime date;
-
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")  //데드라인을 어떤형식으로 받을지 명시
         private LocalDateTime deadline;
         private Part target;
-        //private File image; // 이건 나중에
+        private String link;
         private String title;
         private String explanation;
         private List<String> tags;
@@ -143,7 +138,7 @@ public class TasknoticeApiController {
             tn.setTarget(request.getTarget());
             tn.setTitle(request.getTitle());
             tn.setExplanation(request.getExplanation());
-
+            tn.setLink(request.getLink());
             Long tn_id = tasknoticeService.save(tn);
             //이러면 이제 과제공지글을 생성이 된거고 이 때 request로 tag_id받고 아래에 tasknoticetag로직 추가
             //request로 tag_id를 어떻게받을까 List로 받아서 for문으로 돌리자
@@ -193,7 +188,7 @@ public class TasknoticeApiController {
         //private File image; // 이건 나중에
         private String title;
         private String explanation;
-
+        private String link;
         private List<String> tags;
         private List<Long> data;
     }
@@ -217,6 +212,7 @@ public class TasknoticeApiController {
     public void deleteTasknotice(@PathVariable("id") Long id) {
         if(memberService.findById(SecurityUtil.getCurrentMemberId()).get().getAuthority() == Authority.ROLE_ADMIN) {
             tasknotice_tagService.deleteByTasknoticeId(id);
+            taskService.deleteByTasknotice(id);
             tasknoticeService.delete(id);
         }
     }
@@ -250,14 +246,16 @@ public class TasknoticeApiController {
     static class TasknoticeDto {
         private Long id;
         private Member member;
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime date;
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime deadline;
         //private LocalDateTime updatetime;
         private Part target;
         private File image;
         private String title;
         private String explanation;
-
+        private String link;
         private List<String> tag;
 
         private Boolean isSubmit;
@@ -270,11 +268,11 @@ public class TasknoticeApiController {
             deadline = tasknotice.getDeadline();
             //updatetime = tasknotice.getUpdateTime();
             target = tasknotice.getTarget();
-            image = tasknotice.getImage();
             title = tasknotice.getTitle();
             explanation = tasknotice.getExplanation();
             isSubmit = false;
             tag = new ArrayList<>();
+            link = tasknotice.getLink();
         }
     }
 
@@ -300,6 +298,16 @@ public class TasknoticeApiController {
     @GetMapping("tasknotice/BE")
     public Result ReadTasknoticeBe() {
         List<Tasknotice> tasknotices = tasknoticeService.findBe();
+        List<TasknoticeDto> collect = tasknotices.stream()
+                .map(t -> new TasknoticeDto(t))
+                .collect(Collectors.toList());
+        return new Result(collect);
+    }
+
+    @Operation(summary = "ALL 대상 과제 공지사항 조회")
+    @GetMapping("tasknotice/ALL")
+    public Result ReadtasknoticeAll() {
+        List<Tasknotice> tasknotices = tasknoticeService.findPartAll();
         List<TasknoticeDto> collect = tasknotices.stream()
                 .map(t -> new TasknoticeDto(t))
                 .collect(Collectors.toList());

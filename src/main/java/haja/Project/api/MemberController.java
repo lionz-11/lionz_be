@@ -3,11 +3,9 @@ package haja.Project.api;
 import com.sun.net.httpserver.Authenticator;
 import haja.Project.api.dto.MemberRequestDto;
 import haja.Project.api.dto.MemberResponseDto;
-import haja.Project.domain.Authority;
-import haja.Project.domain.Image;
-import haja.Project.domain.Member;
-import haja.Project.domain.Part;
+import haja.Project.domain.*;
 import haja.Project.service.MemberService;
+import haja.Project.service.TasknoticeService;
 import haja.Project.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,8 +30,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 // 사진을 100kb로 줄이자
@@ -111,17 +113,17 @@ public class MemberController {
     @GetMapping("/{id}")
     public MemberDto findMemberInfoById(@PathVariable("id") Long id) {
             return new MemberDto(memberService.findById(id).get());
-        }
+    }
 
-        @Operation(summary = "전체 멤버 조회")
-        @GetMapping("/all")
-        public Result findAllMember() {
-            List<Member> members = memberService.findAll();
-            List<MemberDto> memberResult = members.stream()
-                    .map(member -> new MemberDto(member))
-                    .collect(Collectors.toList());
-            return new Result(memberResult);
-        }
+    @Operation(summary = "전체 멤버 조회")
+    @GetMapping("/all")
+    public Result findAllMember() {
+        List<Member> members = memberService.findAll();
+        List<MemberDto> memberResult = members.stream()
+                .map(member -> new MemberDto(member))
+                .collect(Collectors.toList());
+        return new Result(memberResult);
+    }
 
         @Operation(summary = "멤버 id로 프로필 조회")
         @GetMapping(value = "/img/{name}", produces = MediaType.IMAGE_JPEG_VALUE)
@@ -179,6 +181,7 @@ public class MemberController {
         String major;
         String student_id;
         Image image;
+        Long accessTokenExpiresIn;
 
         public MemberDto(Member member) {
             this.id = member.getId();
@@ -191,6 +194,9 @@ public class MemberController {
             this.major = member.getMajor();
             this.student_id = member.getStudent_id();
             this.image = member.getImage();
+            if (member.getAccessTokenExpiresIn()!=null) {
+                this.accessTokenExpiresIn = Duration.between(LocalDateTime.now(), member.getAccessTokenExpiresIn()).toMinutes();
+            } else this.accessTokenExpiresIn = null;
         }
     }
 }

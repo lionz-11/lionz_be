@@ -27,13 +27,14 @@ public class Notice {
     @Column(name = "notice_title")
     private String title;
 
-    @Column(name = "notice_explanation")
+    @Column(name = "notice_explanation", columnDefinition = "TEXT")
     private String explanation;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "notice_date")
-    private LocalDate date;
+    private LocalDateTime date;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "notice_deadline")
     private LocalDateTime deadline;
 

@@ -2,8 +2,9 @@ package haja.Project.api.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Getter
+@Getter @Setter
 @NoArgsConstructor
 public class TokenRequestDto {
     private String accessToken;

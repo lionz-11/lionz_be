@@ -54,12 +54,15 @@ public class AuthService {
         tokenDto.setCount(member.getCount());
         memberService.updateCount(member,member.getCount());
 
+        // (추가)member DB에 토큰 만료시간 저장
+        memberService.setTokenCount(member, tokenDto.getAccessTokenExpiresIn());
+
         // 4. RefreshToken 저장
         RefreshToken refreshToken = RefreshToken.builder()
                 .key(authentication.getName())
                 .value(tokenDto.getRefreshToken())
+                .accessToken(tokenDto.getAccessToken())
                 .build();
-
         refreshTokenRepository.save(refreshToken);
 
         // 5. 토큰 발급
@@ -77,7 +80,7 @@ public class AuthService {
         Authentication authentication = tokenProvider.getAuthentication(tokenRequestDto.getAccessToken());
 
         // 3. 저장소에서 Member ID 를 기반으로 Refresh Token 값 가져옴
-        RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
+        RefreshToken refreshToken = refreshTokenRepository.findByAccessToken(tokenRequestDto.getAccessToken())
                 .orElseThrow(() -> new RuntimeException("로그아웃 된 사용자입니다."));
 
         // 4. Refresh Token 일치하는지 검사
@@ -88,8 +91,12 @@ public class AuthService {
         // 5. 새로운 토큰 생성
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
 
+        // (추가)member DB에 토큰 만료시간 저장
+        Member member = memberService.findById(Long.parseLong(authentication.getName())).get();
+        memberService.setTokenCount(member, tokenDto.getAccessTokenExpiresIn());
+
         // 6. 저장소 정보 업데이트
-        RefreshToken newRefreshToken = refreshToken.updateValue(tokenDto.getRefreshToken());
+        RefreshToken newRefreshToken = refreshToken.updateValue(tokenDto.getRefreshToken(), tokenDto.getAccessToken());
         refreshTokenRepository.save(newRefreshToken);
 
         // 토큰 발급

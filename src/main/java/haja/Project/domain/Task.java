@@ -3,6 +3,7 @@ package haja.Project.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,12 +16,13 @@ public class Task {
     @Column(name = "task_id")
     private Long id;
 
-    @Column(name = "task_link")
+    @Column(name = "task_link", columnDefinition = "TEXT")
     private String link;
 
-    @Column(name = "task_explanation")
+    @Column(name = "task_explanation", columnDefinition = "TEXT")
     private String explanation;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "task_date")
     private LocalDateTime date;
 

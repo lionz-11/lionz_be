@@ -40,6 +40,10 @@ public class TasknoticeRepository {
         return em.createQuery("select t from Tasknotice t where t.target = BE",Tasknotice.class).getResultList();
     }
 
+    public List<Tasknotice> findPartAll() {
+        return em.createQuery("select t from Tasknotice t where t.target= ALL", Tasknotice.class).getResultList();
+    }
+
     //이름으로 검색
     public List<Tasknotice> findByName(String name){
         return em.createQuery("select t from Tasknotice t where t.name = :name", Tasknotice.class)
@@ -54,6 +58,12 @@ public class TasknoticeRepository {
                 .getResultList();
     }
 
+
+    public List<Tasknotice> findByMember(Long id) {
+        return em.createQuery("select t from Tasknotice  t where t.member.id = :id", Tasknotice.class)
+                .setParameter("id", id)
+                .getResultList();
+    }
     //삭제
 
     public void deleteTasknotice(Long id) {
