@@ -155,12 +155,14 @@ public class TaskApiController {
         private String link;
         private String explanation;
         private Tasknotice tasknotice;
+        private LocalDateTime date;
         TaskDTO(Task task){
             id = task.getId();
             member = task.getMember();
             link = task.getLink();
             explanation = task.getExplanation();
             tasknotice = task.getTasknotice();
+            date = task.getDate();
         }
     }
 }
