@@ -50,7 +50,6 @@ public class AuthService {
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
 
         // (추가)로그인 횟수 체크 (1번 한거면(즉,최초 로그인이면) 바로 비밀번호 수정페이지로 넘어가게 하려고)
-        //Member member = memberService.findByEmail(memberRequestDto.getEmail());
         Member member = memberService.findByEmail(memberRequestDto.getEmail()).get();
         tokenDto.setCount(member.getCount());
         memberService.updateCount(member,member.getCount());
