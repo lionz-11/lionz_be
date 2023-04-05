@@ -128,7 +128,7 @@ public class MemberController {
         @Operation(summary = "멤버 id로 프로필 조회")
         @GetMapping(value = "/img/{name}", produces = MediaType.IMAGE_JPEG_VALUE)
         public ResponseEntity<byte[]> getImage(@PathVariable("name") String name) throws IOException {
-            //String path = "C:\\Users\\kjk87\\Desktop\\img\\";
+        //String path = "C:\\Users\\kjk87\\Desktop\\img\\";
             String path = "/home/img/";
             InputStream inputStream = new FileInputStream(path + name);
             byte[] bytes = inputStream.readAllBytes();
@@ -142,6 +142,11 @@ public class MemberController {
     @DeleteMapping(value = "/img")
     public void deleteImage() {
         Member member = memberService.findById(SecurityUtil.getCurrentMemberId()).get();
+
+        // 기본 이미지 삭제 불가
+        if (member.getImage().img_name == "DefaultProfile.png") {
+            return;
+        }
 
         Image image = member.getImage();
         File file = new File(image.img_path);
