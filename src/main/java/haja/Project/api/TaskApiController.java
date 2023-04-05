@@ -1,5 +1,6 @@
 package haja.Project.api;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import haja.Project.domain.Member;
 import haja.Project.domain.Task;
 import haja.Project.domain.Tasknotice;
@@ -75,9 +76,9 @@ public class TaskApiController {
         List<Task> tasks = taskService.findByTasknotice(tasknotice_id);
         List<TaskDTO> collect = tasks.stream()
                 .map(t -> new TaskDTO(t))
-                .collect(Collectors.toList());
+            .collect(Collectors.toList());
         return new Result(collect);
-    }
+}
 
     //수정완료 버튼
     @Operation(summary = "과제 수정")
@@ -155,7 +156,10 @@ public class TaskApiController {
         private String link;
         private String explanation;
         private Tasknotice tasknotice;
+
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime date;
+
         TaskDTO(Task task){
             id = task.getId();
             member = task.getMember();
