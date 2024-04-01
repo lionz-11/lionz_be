@@ -50,9 +50,9 @@ dependencies {
 	//actuator
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
+
 	//프로메테우스
 	implementation 'io.micrometer:micrometer-registry-prometheus'
-
 }
 
 tasks.named('test') {
