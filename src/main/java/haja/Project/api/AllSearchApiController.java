@@ -34,6 +34,7 @@ public class AllSearchApiController {
                 .map(t -> new TasknoticeDto(t))
                 .collect(Collectors.toList());
 
+
         List<Task> tasks = taskService.findByWord(word);
         List<TaskDTO> collect2 = tasks.stream()
                 .map(t -> new TaskDTO(t))

@@ -46,7 +46,12 @@ dependencies {
 	implementation 'io.micrometer:micrometer-registry-prometheus'
 
 	implementation group: 'org.imgscalr', name: 'imgscalr-lib', version: '4.2'
+	
+	//actuator
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
+	//프로메테우스
+	implementation 'io.micrometer:micrometer-registry-prometheus'
 
 }
 
