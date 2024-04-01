@@ -8,10 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -31,19 +28,20 @@ public class AllSearchApiController {
     @io.swagger.v3.oas.annotations.tags.Tag(name = "통합검색")
     @Operation(summary = "검색모달에서 키워드 검색 부분", description = "Tag, ")
     @GetMapping("all")
-    public Result AllSearch(@RequestBody @Valid AllSearchRequest request){
-        List<Tasknotice> tasknotices = tasknoticeService.findByWord(request.getWord());
+    public Result AllSearch(@RequestParam String word){
+        List<Tasknotice> tasknotices = tasknoticeService.findByWord(word);
         List<TasknoticeDto> collect = tasknotices.stream()
                 .map(t -> new TasknoticeDto(t))
                 .collect(Collectors.toList());
 
-        List<Task> tasks = taskService.findByWord(request.getWord());
+
+        List<Task> tasks = taskService.findByWord(word);
         List<TaskDTO> collect2 = tasks.stream()
                 .map(t -> new TaskDTO(t))
                 .collect(Collectors.toList());
 
 
-        List<Tasknotice_Tag> tnts  = tasknotice_tagService.findByTagName(request.getWord());
+        List<Tasknotice_Tag> tnts  = tasknotice_tagService.findByTagName(word);
         List<Tasknotice_TagDto> collect3 = tnts.stream()
                 .map(t -> new Tasknotice_TagDto(t))
                 .collect(Collectors.toList());
