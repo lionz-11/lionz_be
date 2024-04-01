@@ -252,7 +252,7 @@ public class TasknoticeApiController {
         private LocalDateTime deadline;
         //private LocalDateTime updatetime;
         private Part target;
-        private File image;
+        private Image image;
         private String title;
         private String explanation;
         private String link;
