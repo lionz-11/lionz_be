@@ -2,6 +2,7 @@ package haja.Project.repository;
 
 import haja.Project.domain.Notice;
 import haja.Project.domain.Part;
+import haja.Project.domain.Tasknotice;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
@@ -31,6 +32,12 @@ public class NoticeRepository {
         Part part = Part.valueOf(target);
         return em.createQuery("select n from Notice n where n.target = :part", Notice.class)
                 .setParameter("part", part)
+                .getResultList();
+    }
+
+    public List<Notice> findByWord(String word){  //and가 아니라 or!
+        return em.createQuery("select n from Notice n where n.title like :word or n.explanation like :word", Notice.class)
+                .setParameter("word","%"+word+"%")
                 .getResultList();
     }
 

@@ -1,5 +1,7 @@
 package haja.Project.api;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import haja.Project.api.NoticeApiController.NoticeDto;
 import haja.Project.domain.*;
 import haja.Project.service.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AllSearchApiController {
 
+    private final NoticeService noticeService;
     private final TasknoticeService tasknoticeService;
     private final TaskService taskService;
     private final Tasknotice_TagService tasknotice_tagService;
@@ -29,6 +32,12 @@ public class AllSearchApiController {
     @Operation(summary = "검색모달에서 키워드 검색 부분", description = "Tag, ")
     @GetMapping("all")
     public Result AllSearch(@RequestParam String word){
+        List<Notice> notices = noticeService.findByWord(word);
+        List<NoticeDto> collect0 = notices.stream()
+                .map(t -> new NoticeDto(t))
+                .collect(Collectors.toList());
+
+
         List<Tasknotice> tasknotices = tasknoticeService.findByWord(word);
         List<TasknoticeDto> collect = tasknotices.stream()
                 .map(t -> new TasknoticeDto(t))
@@ -46,11 +55,34 @@ public class AllSearchApiController {
                 .map(t -> new Tasknotice_TagDto(t))
                 .collect(Collectors.toList());
 
-        return new Result(collect,collect2,collect3);
+        return new Result(collect0, collect,collect2,collect3);
     }
 
+    @Data
+    static class NoticeDto {
+        Long id;
+        Member member;
+        String title;
+        String explanation;
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+        LocalDateTime date;
+        Part target;
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+        LocalDateTime deadline;
+        List<String> tag;
 
 
+        public NoticeDto(Notice notice) {
+            this.id = notice.getId();
+            this.member = notice.getMember();
+            this.title = notice.getTitle();
+            this.explanation = notice.getExplanation();
+            this.date = notice.getDate();
+            this.deadline = notice.getDeadline();
+            this.target = notice.getTarget();
+            tag = new ArrayList<>();
+        }
+    }
 
     @Data
     @AllArgsConstructor
@@ -115,7 +147,8 @@ public class AllSearchApiController {
 
     @Data
     @AllArgsConstructor
-    static class Result<TN,T,TNT,TKT>{
+    static class Result<N, TN,T,TNT,TKT>{
+        private N notice;
         private TN tasknotice;
         private T task;
         private TNT tasknotice_tag;

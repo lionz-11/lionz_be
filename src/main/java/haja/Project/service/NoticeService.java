@@ -1,6 +1,7 @@
 package haja.Project.service;
 
 import haja.Project.domain.Notice;
+import haja.Project.domain.Tasknotice;
 import haja.Project.repository.NoticeRepository;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.weaver.ast.Not;
@@ -27,6 +28,11 @@ public class NoticeService {
     public List<Notice> findAll() { return noticeRepository.findAll(); }
 
     public List<Notice> findByTarget(String target) { return noticeRepository.findByTarget(target); }
+
+    public List<Notice> findByWord(String word){
+        return noticeRepository.findByWord(word);
+    }
+
     @Transactional
     public void update(Long id, String title, String explanation, LocalDateTime deadline) {
         noticeRepository.update(id, title, explanation, deadline);
